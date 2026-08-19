@@ -1,7 +1,9 @@
 #include "Thermostat.h"
 
-Thermostat::Thermostat(std::string name)
-    : Device(name)
+// Let op: de default waarde (= 21.0) hoort enkel in de HEADER thuis,
+// niet hier herhaald te worden -- dat zou een compile-fout geven.
+Thermostat::Thermostat(std::string name, double targetTemperature)
+    : Device(name), targetTemperature_(targetTemperature)
 {
 }
 

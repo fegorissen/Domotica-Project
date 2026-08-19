@@ -32,6 +32,13 @@ public:
     // pointers te kopiëren (wat sowieso niet zou compileren).
     Room(const Room& other);
 
+    // vraag 19 (Object Georiënteerde Project - Aanvullend): useful usage of "this"
+    // Copy-assignment operator: nodig om "roomB = roomA;" te
+    // ondersteunen (in tegenstelling tot Room roomB(roomA), wat de
+    // copy CONSTRUCTOR gebruikt). Zie Room.cpp voor waarom "this"
+    // hier essentieel is.
+    Room& operator=(const Room& other);
+
     // vraag 15 (Object Georiënteerde Project - Aanvullend): at least 2 destructors
     // Expliciet gedefinieerd (niet enkel = default) om aan te tonen
     // wanneer een Room precies opgeruimd wordt -- nuttig als bewijs
@@ -40,14 +47,23 @@ public:
     ~Room();
 
     void addDevice(std::unique_ptr<Device> device);
+
+    // vraag 20 (Object Georiënteerde Project - Aanvullend): useful member function
+    // Lost een concreet, herbruikbaar probleem op: een device opzoeken
+    // op naam zonder dat de aanroeper zelf door devices_ moet loopen.
+    // Wordt drie keer hergebruikt in main.cpp (lamp, deur, en het
+    // "niet-bestaand"-scenario), telkens met correcte nullptr-afhandeling.
     Device* findDevice(const std::string& name) const;
+
     void printAllDevices() const;
 
 private:
     std::string name_;
     // vraag 8: useful and correct object composition
-    // Dit is de eigenlijke compositie: Room bezit een verzameling
-    // Device's als lid-variabele, gecombineerd als bouwsteen om de
-    // functionaliteit van een kamer te realiseren.
+    // vraag 22 (Object Georiënteerde Project - Aanvullend): useful member variable
+    // devices_ is de kern van deze klasse: zonder deze variabele zou
+    // Room geen enkele van zijn functies (addDevice, findDevice,
+    // printAllDevices) kunnen uitvoeren. Het is de eigenlijke data
+    // die de compositie-relatie met Device mogelijk maakt.
     std::vector<std::unique_ptr<Device>> devices_;
 };

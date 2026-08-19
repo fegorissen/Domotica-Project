@@ -22,11 +22,7 @@ Room::Room()
 // juiste, concrete type (Light/Thermostat/...). Dit BEWIJST dynamisch
 // polymorfisme: clone() wordt hier aangeroepen op een unique_ptr<Device>
 // zonder dat Room weet welk concreet type erachter zit, en toch krijgt
-// elk device zijn eigen, correcte kopie (bv. Light::clone() maakt een
-// Light, niet een generiek Device). Dit is live getest in main.cpp:
-// het togglen van een device in de kopie liet het origineel volledig
-// ongewijzigd, wat enkel mogelijk is als elk device correct
-// gekloond werd naar zijn eigen, echte type.
+// elk device zijn eigen, correcte kopie.
 Room::Room(const Room& other)
     : name_(other.name_)
 {
@@ -34,6 +30,31 @@ Room::Room(const Room& other)
     {
         devices_.push_back(device->clone());
     }
+}
+
+// vraag 19 (Object Georiënteerde Project - Aanvullend): useful usage of "this"
+// De check "if (this == &other)" vergelijkt het GEHEUGENADRES van het
+// huidige object met het adres van de parameter -- dit kan ENKEL met
+// "this", er bestaat geen alternatief. Zonder deze check zou
+// "room = room;" (zelftoewijzing) devices_ eerst leegmaken vóór het
+// "nieuwe" (in werkelijkheid hetzelfde) object gekopieerd wordt, wat
+// tot dataverlies leidt. De code werkt dus letterlijk niet correct
+// zonder "this".
+Room& Room::operator=(const Room& other)
+{
+    if (this == &other)
+    {
+        return *this;
+    }
+
+    name_ = other.name_;
+    devices_.clear();
+    for (const auto& device : other.devices_)
+    {
+        devices_.push_back(device->clone());
+    }
+
+    return *this;
 }
 
 // vraag 15 (Object Georiënteerde Project - Aanvullend): at least 2 destructors
@@ -51,6 +72,7 @@ void Room::addDevice(std::unique_ptr<Device> device)
     devices_.push_back(std::move(device));
 }
 
+// vraag 20 (Object Georiënteerde Project - Aanvullend): useful member function
 Device* Room::findDevice(const std::string& name) const
 {
     for (const auto& device : devices_)
@@ -68,8 +90,7 @@ Device* Room::findDevice(const std::string& name) const
 // resultaat terug (Light/Thermostat/DoorLock/Camera), zonder dat Room
 // ooit weet welk concreet type er precies in de vector zit. Welke
 // implementatie effectief draait, wordt pas tijdens uitvoering
-// bepaald via dynamic dispatch -- zichtbaar bewezen in de output van
-// main.cpp: elk device toont zijn eigen, unieke status-formaat.
+// bepaald via dynamic dispatch.
 void Room::printAllDevices() const
 {
     std::cout << "Kamer: " << name_ << std::endl;
