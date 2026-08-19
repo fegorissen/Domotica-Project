@@ -6,6 +6,23 @@
 #include "Camera.h"
 #include "Room.h"
 
+// vraag 2 (Object Georiënteerde Project - Aanvullend): clean main
+// main() bevat geen enkele beslissingslogica of berekening zelf -- het
+// maakt enkel objecten aan (Room, devices) en roept bestaande
+// klassefuncties aan (addDevice, findDevice, toggle, printAllDevices).
+// Alle "denkwerk" zit in Room/Device en hun afgeleiden, niet in main().
+
+// vraag 5 (Object Georiënteerde Project - Aanvullend): maintainability
+// Doorheen het volledige project wordt één consistente stijl gevolgd:
+//  - Member variables eindigen steeds op een underscore (name_, on_,
+//    id_, devices_, motionDetected_, ...).
+//  - Functienamen zijn camelCase en beschrijvend (getName, isOn,
+//    addDevice, findDevice, printAllDevices, triggerMotion).
+//  - Klassenamen zijn PascalCase (Device, Light, Thermostat, Room).
+//  - Elke klasse/header bevat comments die uitleggen WAAROM een
+//    bepaalde OOP-keuze gemaakt is, niet enkel wat de code doet.
+//  - Consistente indentatie en accolade-stijl in alle bestanden.
+
 // vraag 12: no mistake in object-oriented programming (deel 2)
 // Overzicht van bewust vermeden OOP-valkuilen doorheen het project:
 //  - Geen dangling pointers: Room bezit zijn devices via unique_ptr
