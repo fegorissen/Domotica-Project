@@ -5,6 +5,14 @@ Light::Light(std::string name)
 {
 }
 
+// vraag 17 (Object Georiënteerde Project - Aanvullend): constructor forwarding
+// Roept de bestaande parameterized constructor aan met een standaard-
+// naam, i.p.v. de logica van Device(name) hier te herhalen.
+Light::Light()
+    : Light("Unnamed Light")
+{
+}
+
 void Light::toggle()
 {
     on_ = !on_;

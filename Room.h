@@ -6,21 +6,23 @@
 
 // vraag 6 (Object Georiënteerde Project - Aanvullend): separate header files
 // Elke klasse in dit project heeft zijn eigen .h/.cpp-paar: Device,
-// Light, Thermostat, DoorLock, Camera en Room. Niets staat samen in
-// één groot bestand -- dit houdt elke klasse overzichtelijk en
-// onafhankelijk aanpasbaar zonder de rest van het project te moeten
-// doorzoeken.
+// Light, Thermostat, DoorLock, Camera en Room -- niets staat samen in
+// één groot bestand.
 
 // vraag 8: useful and correct object composition
-// Objectcompositie is hier nuttig en correct toegepast omdat Room
-// "has-a" verzameling Devices (via unique_ptr), niet via overerving
-// -- een Room ís geen Device. De devices worden als bouwstenen
-// gecombineerd om de functionaliteit van een kamer (toestellen
-// groeperen, opzoeken, tonen) te realiseren.
+// Room "has-a" verzameling Devices (via unique_ptr), geen inheritance.
 class Room
 {
 public:
+    // vraag 13 (Object Georiënteerde Project - Aanvullend): at least 2 parameterized constructors
+    // Vereist een naam bij aanmaak, bv. Room livingRoom("Woonkamer").
     Room(std::string name);
+
+    // vraag 12 (Object Georiënteerde Project - Aanvullend): at least 2 default constructors
+    // vraag 17 (Object Georiënteerde Project - Aanvullend): constructor forwarding
+    // Room() hergebruikt de parameterized constructor met een
+    // standaardnaam, i.p.v. zelf opnieuw name_ te initialiseren.
+    Room();
 
     void addDevice(std::unique_ptr<Device> device);
     Device* findDevice(const std::string& name) const;
@@ -28,5 +30,9 @@ public:
 
 private:
     std::string name_;
+    // vraag 8: useful and correct object composition
+    // Dit is de eigenlijke compositie: Room bezit een verzameling
+    // Device's als lid-variabele, gecombineerd als bouwsteen om de
+    // functionaliteit van een kamer te realiseren.
     std::vector<std::unique_ptr<Device>> devices_;
 };

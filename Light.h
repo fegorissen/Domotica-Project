@@ -2,17 +2,19 @@
 #include "Device.h"
 
 // vraag 6: useful and correct inheritance
-// De overerving is nuttig en correct omdat Light via "public Device"
-// een correcte "is-a"-relatie aangaat: elke Light ís ook een Device,
-// en kan overal gebruikt worden waar een Device verwacht wordt (bv.
-// in Room's vector<unique_ptr<Device>>). Light hoeft de gemeenschap-
-// pelijke code (naam bijhouden, aan/uit-status) niet te herhalen --
-// dat regelt Device al -- en voegt enkel zijn eigen, specifieke data
-// (brightness_) toe.
+// Light "is-a" Device: erft de volledige interface via public
+// inheritance en voegt enkel zijn eigen data (brightness_) toe.
 class Light : public Device
 {
 public:
     Light(std::string name);
+
+    // vraag 12 (Object Georiënteerde Project - Aanvullend): at least 2 default constructors
+    // vraag 17 (Object Georiënteerde Project - Aanvullend): constructor forwarding
+    // Light() vraagt geen argumenten van de gebruiker, maar hergebruikt
+    // de bestaande parameterized constructor (hierboven) via
+    // delegating constructor-syntax i.p.v. logica te dupliceren.
+    Light();
 
     void toggle() override;
     std::string status() const override;

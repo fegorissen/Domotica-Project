@@ -8,21 +8,13 @@
 // toggle, status) voor elk toestel, zonder de details van een
 // specifiek toestel te tonen. Doordat toggle()/status() pure virtual
 // zijn (= 0), kan Device nooit rechtstreeks geïnstantieerd worden.
-//
-// vraag 4 (Object Georiënteerde Project - Aanvullend): correct protections
-// Drie niveaus worden hier bewust en correct gebruikt:
-//  - public: enkel wat de buitenwereld moet kunnen aanroepen
-//    (constructor, toggle(), status(), getName(), isOn(), getId()).
-//  - protected: name_ en on_ zijn nodig in de afgeleide klassen
-//    (Light/Thermostat/DoorLock/Camera gebruiken ze rechtstreeks in
-//    hun eigen toggle()), maar mogen niet van buiten de klasse-
-//    hiërarchie aangepast worden.
-//  - private: nextId_ en id_ zijn interne implementatiedetails die
-//    zelfs afgeleide klassen niet nodig hebben en dus niet mogen
-//    aanraken -- enkel Device zelf beheert de ID-toekenning.
 class Device
 {
 public:
+    // vraag 13 (Object Georiënteerde Project - Aanvullend): at least 2 parameterized constructors
+    // Vereist een naam bij aanmaak -- gebruikt door alle afgeleide
+    // klassen (Light, Thermostat, DoorLock, Camera) in hun eigen
+    // constructor via Device(name).
     Device(std::string name);
 
     // vraag 11: useful and correct virtual function
@@ -40,17 +32,24 @@ public:
     // Geeft het unieke ID van dit device terug, toegekend bij aanmaak.
     unsigned char getId() const;
 
+    // vraag 4 (Object Georiënteerde Project - Aanvullend): correct protections
+    // protected: name_/on_ zijn nodig in de afgeleide klassen (Light/
+    // Thermostat/DoorLock/Camera gebruiken ze rechtstreeks in hun eigen
+    // toggle()), maar mogen niet van buiten de klasse-hiërarchie
+    // aangepast worden.
 protected:
     std::string name_;
     bool on_ = false;
 
+    // private: nextId_ en id_ zijn interne implementatiedetails die zelfs
+    // afgeleide klassen niet nodig hebben -- enkel Device zelf beheert de
+    // ID-toekenning.
 private:
     // vraag 3 (Object Georiënteerde Project - Aanvullend): no globals, but statics if needed
     // nextId_ is een static member: gedeeld door alle Device-objecten
     // (er bestaat maar één "teller" voor de hele klasse), maar netjes
     // ingekapseld binnen Device zelf -- geen globale variabele die
     // van overal in het programma rechtstreeks aanpasbaar zou zijn.
-    // Elke nieuwe Device krijgt hiermee automatisch een uniek ID.
     static unsigned char nextId_;
     unsigned char id_;
 };

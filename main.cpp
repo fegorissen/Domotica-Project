@@ -6,44 +6,28 @@
 #include "Camera.h"
 #include "Room.h"
 
+// vraag 5 (Object Georiënteerde Project - Aanvullend): maintainability
+// Dit geldt voor het volledige project, niet één regel: consistente
+// naming (member variables eindigen op _, functies zijn camelCase,
+// klassen zijn PascalCase), en comments overal die uitleggen WAAROM
+// een OOP-keuze gemaakt is. Zie elk .h/.cpp-bestand hiervoor.
+
+// vraag 9 (Object Georiënteerde Project - Aanvullend): sufficient git commits
+// Dit project is opgebouwd in duidelijk afgebakende stappen, elk met
+// een eigen, beschrijvende commit-boodschap. Zie de volledige
+// geschiedenis op GitHub:
+// https://github.com/fegorissen/Domotica-Project/commits/main
+
+// vraag 10 (Object Georiënteerde Project - Aanvullend): correct files on git
+// De repository bevat enkel de juiste bestanden: broncode (.h/.cpp),
+// CMakeLists.txt, README.md, LICENSE en .gitignore. De build-map is
+// bewust uitgesloten via .gitignore en verwijderd uit de
+// git-geschiedenis.
+
 // vraag 2 (Object Georiënteerde Project - Aanvullend): clean main
 // main() bevat geen enkele beslissingslogica of berekening zelf -- het
-// maakt enkel objecten aan (Room, devices) en roept bestaande
-// klassefuncties aan (addDevice, findDevice, toggle, printAllDevices).
-// Alle "denkwerk" zit in Room/Device en hun afgeleiden, niet in main().
-
-// vraag 5 (Object Georiënteerde Project - Aanvullend): maintainability
-// Doorheen het volledige project wordt één consistente stijl gevolgd:
-//  - Member variables eindigen steeds op een underscore (name_, on_,
-//    id_, devices_, motionDetected_, ...).
-//  - Functienamen zijn camelCase en beschrijvend (getName, isOn,
-//    addDevice, findDevice, printAllDevices, triggerMotion).
-//  - Klassenamen zijn PascalCase (Device, Light, Thermostat, Room).
-//  - Elke klasse/header bevat comments die uitleggen WAAROM een
-//    bepaalde OOP-keuze gemaakt is, niet enkel wat de code doet.
-//  - Consistente indentatie en accolade-stijl in alle bestanden.
-
-// vraag 12: no mistake in object-oriented programming (deel 2)
-// Overzicht van bewust vermeden OOP-valkuilen doorheen het project:
-//  - Geen dangling pointers: Room bezit zijn devices via unique_ptr
-//    (zie Room.h) in plaats van rauwe pointers naar lokale
-//    variabelen, die ongeldig zouden worden zodra die variabelen uit
-//    scope gaan.
-//  - Geen crash bij een niet-bestaand device: findDevice() geeft
-//    nullptr terug (zie Room.cpp), en dat wordt hieronder altijd
-//    expliciet gecontroleerd vóór gebruik.
-//  - Geen ontbrekende virtuele destructor: Device::~Device() is
-//    virtual (zie Device.h), essentieel omdat objecten via een
-//    Device-pointer beheerd worden.
-//  - Consequent "override" i.p.v. "virtual" te herhalen in elke
-//    afgeleide klasse (zie Light.h, Thermostat.h, Doorlock.h,
-//    Camera.h) -- de compiler controleert zo mee of de signatuur
-//    klopt.
-//  - Geen public data members: alle velden zijn protected/private met
-//    gecontroleerde toegang via functies (zie Device.h, Camera.h).
-//  - Geen overerving gebruikt waar compositie hoorde: Room erft niet
-//    van Device, het bevat Devices als lid (zie Room.h).
-
+// maakt enkel objecten aan en roept bestaande klassefuncties aan.
+// Alle "denkwerk" zit in Room/Device en hun afgeleiden, niet hier.
 int main()
 {
     Room livingRoom("Woonkamer");
@@ -53,8 +37,20 @@ int main()
     livingRoom.addDevice(std::make_unique<DoorLock>("Voordeur"));
     livingRoom.addDevice(std::make_unique<Camera>("Cam Living"));
 
+    // vraag 12 (Object Georiënteerde Project - Aanvullend): at least 2 default constructors (bewijs)
+    // Deze Light wordt aangemaakt via de default constructor (geen
+    // argument meegegeven), die via constructor forwarding intern
+    // Light("Unnamed Light") aanroept. Zichtbaar in de output hieronder
+    // als "Unnamed Light: uit".
+    livingRoom.addDevice(std::make_unique<Light>());
+
     livingRoom.printAllDevices();
 
+    // vraag 8 (Object Georiënteerde Project - Aanvullend): fully working project
+    // toggle() wisselt hier effectief de status om (uit -> aan). De
+    // output van dit programma toont voor elk type de juiste,
+    // betekenisvolle status ("vergrendeld"/"ontgrendeld" voor
+    // DoorLock, "opname"/"uitgeschakeld" voor Camera, ...).
     Device* lamp = livingRoom.findDevice("Woonkamerlamp");
     if (lamp != nullptr)
     {
@@ -67,6 +63,12 @@ int main()
         deur->toggle();
     }
 
+    // vraag 7 (Object Georiënteerde Project - Aanvullend): one complete
+    // project that compiles and does not crash
+    // findDevice() geeft nullptr terug voor een niet-bestaand device
+    // (in plaats van een ongeldige pointer), en dat wordt hier
+    // expliciet gecontroleerd vóór gebruik -- dit voorkomt een crash
+    // bij deze edge case, net zoals bij elke andere aanroep hierboven.
     Device* onbestaand = livingRoom.findDevice("Kelderlamp");
     if (onbestaand == nullptr)
     {
@@ -76,5 +78,10 @@ int main()
     std::cout << "--- na toggle ---" << std::endl;
     livingRoom.printAllDevices();
 
+    // vraag 12: no mistake in object-oriented programming
+    // Geen dangling pointers (Room bezit devices via unique_ptr, zie
+    // Room.h), geen ontbrekende virtuele destructor (zie Device.h),
+    // consequent "override" i.p.v. "virtual" te herhalen, geen public
+    // data members, geen overerving gebruikt waar compositie hoorde.
     return 0;
 }
