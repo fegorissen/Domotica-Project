@@ -4,6 +4,14 @@
 #include <memory>
 #include "Device.h"
 
+// vraag 8: useful and correct object composition
+// Objectcompositie is hier nuttig en correct toegepast omdat Room
+// "has-a" verzameling Devices (via unique_ptr), niet via overerving --
+// een Room ís geen Device. De devices worden als bouwstenen
+// gecombineerd om de functionaliteit van een kamer (toestellen
+// groeperen, opzoeken, tonen) te realiseren. Dit maakt de code
+// modulair: Room hoeft nooit te weten welke soorten Device erin
+// zitten, enkel dat het Devices zijn.
 class Room
 {
 public:
