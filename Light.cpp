@@ -25,3 +25,8 @@ std::string Light::status() const
     else
         return "uit";
 }
+
+std::unique_ptr<Device> Light::clone() const
+{
+    return std::make_unique<Light>(*this);
+}

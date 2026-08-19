@@ -17,3 +17,8 @@ std::string Thermostat::status() const
     else
         return "uit";
 }
+
+std::unique_ptr<Device> Thermostat::clone() const
+{
+    return std::make_unique<Thermostat>(*this);
+}

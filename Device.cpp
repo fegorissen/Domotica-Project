@@ -7,6 +7,13 @@
 // geven (wat bij een gewone member variable wel zou gebeuren).
 unsigned char Device::nextId_ = 1;
 
+// vraag 16 (Object Georiënteerde Project - Aanvullend): member initialization in constructors
+// Het stuk na de ":" is de member-initialisatielijst -- name_ en id_
+// worden hier DIRECT met hun juiste waarde aangemaakt, in plaats van
+// eerst met een default-waarde aangemaakt te worden en pas daarna in
+// het { }-blok overschreven te worden. Dit gebeurt consequent in élke
+// constructor doorheen het project (zie ook Room.cpp, Light.cpp,
+// Thermostat.cpp, Doorlock.cpp, Camera.cpp).
 Device::Device(std::string name)
     : name_(name), id_(nextId_++)
 {

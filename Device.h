@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <memory>
 
 // vraag 4: useful and correct abstraction
 // vraag 9: useful and correct base class
@@ -24,6 +25,14 @@ public:
 
     virtual void toggle() = 0;
     virtual std::string status() const = 0;
+
+    // vraag 14 (Object Georiënteerde Project - Aanvullend): at least 2 copy constructors
+    // clone() is nodig omdat Room een DIEPE kopie van al zijn devices
+    // moet kunnen maken (zie Room.cpp): een unique_ptr<Device> kan niet
+    // rechtstreeks gekopieerd worden, dus elk concreet type (Light,
+    // Thermostat, ...) implementeert clone() door zijn EIGEN copy
+    // constructor aan te roepen via make_unique<Type>(*this).
+    virtual std::unique_ptr<Device> clone() const = 0;
 
     std::string getName() const;
     bool isOn() const;

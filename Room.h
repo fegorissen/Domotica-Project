@@ -24,6 +24,21 @@ public:
     // standaardnaam, i.p.v. zelf opnieuw name_ te initialiseren.
     Room();
 
+    // vraag 14 (Object Georiënteerde Project - Aanvullend): at least 2 copy constructors
+    // Deze copy constructor is ECHT nodig en zelf geschreven (kan niet
+    // = default zijn): devices_ is een vector<unique_ptr<Device>>, en
+    // unique_ptr is niet kopieerbaar. We maken hier een DIEPE kopie
+    // door voor elk device clone() aan te roepen, i.p.v. enkel de
+    // pointers te kopiëren (wat sowieso niet zou compileren).
+    Room(const Room& other);
+
+    // vraag 15 (Object Georiënteerde Project - Aanvullend): at least 2 destructors
+    // Expliciet gedefinieerd (niet enkel = default) om aan te tonen
+    // wanneer een Room precies opgeruimd wordt -- nuttig als bewijs
+    // en als voorbeeld van hoe je destructor-gedrag kan uitbreiden
+    // (bv. later loggen naar een bestand i.p.v. de console).
+    ~Room();
+
     void addDevice(std::unique_ptr<Device> device);
     Device* findDevice(const std::string& name) const;
     void printAllDevices() const;

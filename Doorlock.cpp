@@ -1,4 +1,4 @@
-#include "DoorLock.h"
+#include "Doorlock.h"
 
 DoorLock::DoorLock(std::string name)
     : Device(name)
@@ -16,4 +16,9 @@ std::string DoorLock::status() const
         return "vergrendeld";
     else
         return "ontgrendeld";
+}
+
+std::unique_ptr<Device> DoorLock::clone() const
+{
+    return std::make_unique<DoorLock>(*this);
 }

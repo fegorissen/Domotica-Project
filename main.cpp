@@ -78,6 +78,24 @@ int main()
     std::cout << "--- na toggle ---" << std::endl;
     livingRoom.printAllDevices();
 
+    // vraag 14 (Object Georiënteerde Project - Aanvullend): at least 2 copy constructors (bewijs)
+    // We maken een kopie van livingRoom en wijzigen enkel de kopie.
+    // Doordat de copy constructor een DIEPE kopie maakt (via clone()
+    // op elk device), blijft het origineel volledig ongewijzigd --
+    // zichtbaar in de output hieronder.
+    Room roomCopy = livingRoom;
+    Device* lampInCopy = roomCopy.findDevice("Woonkamerlamp");
+    if (lampInCopy != nullptr)
+    {
+        lampInCopy->toggle();
+    }
+
+    std::cout << "--- origineel (ongewijzigd) ---" << std::endl;
+    livingRoom.printAllDevices();
+
+    std::cout << "--- kopie (Woonkamerlamp getoggled) ---" << std::endl;
+    roomCopy.printAllDevices();
+
     // vraag 12: no mistake in object-oriented programming
     // Geen dangling pointers (Room bezit devices via unique_ptr, zie
     // Room.h), geen ontbrekende virtuele destructor (zie Device.h),

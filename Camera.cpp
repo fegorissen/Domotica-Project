@@ -21,6 +21,11 @@ std::string Camera::status() const
         return "opname (rustig)";
 }
 
+std::unique_ptr<Device> Camera::clone() const
+{
+    return std::make_unique<Camera>(*this);
+}
+
 void Camera::triggerMotion()
 {
     motionDetected_ = true;

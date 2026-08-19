@@ -6,9 +6,7 @@
 // afgebakende verantwoordelijkheid heeft: één verwarmingstoestel
 // voorstellen. Het hergebruikt alles wat gemeenschappelijk is via
 // Device (naam, aan/uit), en voegt enkel zijn eigen, specifieke data
-// (targetTemperature_) en gedrag toe. Net als Light, DoorLock en
-// Camera doet het precies één ding, wat de code overzichtelijk en
-// makkelijk uitbreidbaar maakt.
+// (targetTemperature_) en gedrag toe.
 class Thermostat : public Device
 {
 public:
@@ -16,6 +14,7 @@ public:
 
     void toggle() override;
     std::string status() const override;
+    std::unique_ptr<Device> clone() const override;
 
 private:
     double targetTemperature_ = 21.0;
