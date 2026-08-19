@@ -2,6 +2,18 @@
 #include <string>
 #include <memory>
 
+// vraag 24 (Object Georiënteerde Project - Aanvullend): correct usage of inline function
+// Klein, veelgebruikt hulpfunctietje dat in de header staat. Elke .cpp
+// die Device.h include (Light.cpp, Thermostat.cpp, Doorlock.cpp,
+// Camera.cpp, Room.cpp) krijgt zijn eigen kopie van deze functie op
+// compile-tijd. Zonder "inline" zou dit een linker-fout geven
+// ("multiple definition of onOffText") zodra meer dan één .cpp-bestand
+// deze header include -- wat hier letterlijk het geval is.
+inline std::string onOffText(bool on)
+{
+    return on ? "aan" : "uit";
+}
+
 // vraag 4: useful and correct abstraction
 // vraag 9: useful and correct base class
 // vraag 10: useful and correct abstract base class
@@ -34,7 +46,16 @@ public:
     // constructor aan te roepen via make_unique<Type>(*this).
     virtual std::unique_ptr<Device> clone() const = 0;
 
+    // vraag 23 (Object Georiënteerde Project - Aanvullend): useful getters and setters for member variables
+    // Getter: geeft de huidige naam terug, zonder dat de aanroeper
+    // rechtstreeks toegang krijgt tot het private/protected veld.
     std::string getName() const;
+
+    // vraag 23 (Object Georiënteerde Project - Aanvullend): useful getters and setters for member variables
+    // Setter met validatie: weigert een lege naam, in plaats van
+    // zomaar elke waarde toe te laten.
+    void setName(const std::string& name);
+
     bool isOn() const;
 
     // vraag 20 (Object Georiënteerde Project - Aanvullend): useful member function

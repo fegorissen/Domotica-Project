@@ -47,10 +47,17 @@ int main()
     livingRoom.printAllDevices();
 
     // vraag 8 (Object Georiënteerde Project - Aanvullend): fully working project
-    // toggle() wisselt hier effectief de status om (uit -> aan). De
-    // output van dit programma toont voor elk type de juiste,
-    // betekenisvolle status ("vergrendeld"/"ontgrendeld" voor
-    // DoorLock, "opname"/"uitgeschakeld" voor Camera, ...).
+    // vraag 25 (Object Georiënteerde Project - Aanvullend): useful template function or class (bewijs)
+    // We togglen de thermostaat aan, zodat status() de doeltemperatuur
+    // toont (die intern via clamp<double>() begrensd werd bij het
+    // aanmaken). Zichtbaar in de output als "verwarmt naar 21.000000
+    // graden".
+    Device* thermostaatDevice = livingRoom.findDevice("Verwarming");
+    if (thermostaatDevice != nullptr)
+    {
+        thermostaatDevice->toggle();
+    }
+
     Device* lamp = livingRoom.findDevice("Woonkamerlamp");
     if (lamp != nullptr)
     {
@@ -77,6 +84,19 @@ int main()
 
     std::cout << "--- na toggle ---" << std::endl;
     livingRoom.printAllDevices();
+
+    // vraag 25 (Object Georiënteerde Project - Aanvullend): useful template function or class (bewijs)
+    // We proberen de thermostaat op een onrealistische waarde (999
+    // graden) te zetten via setTargetTemperature(), die intern
+    // clamp<double>() gebruikt. De output hieronder toont dat de
+    // waarde effectief begrensd wordt op 30 graden, niet 999.
+    Thermostat* thermostaat = dynamic_cast<Thermostat*>(thermostaatDevice);
+    if (thermostaat != nullptr)
+    {
+        thermostaat->setTargetTemperature(999.0);
+        std::cout << "--- na poging tot 999 graden (clamp-test) ---" << std::endl;
+        std::cout << "  Verwarming: " << thermostaat->status() << std::endl;
+    }
 
     // vraag 14 (Object Georiënteerde Project - Aanvullend): at least 2 copy constructors (bewijs)
     // We maken een kopie van livingRoom en wijzigen enkel de kopie.

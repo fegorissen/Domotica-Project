@@ -14,13 +14,23 @@ public:
     // targetTemperature heeft een default waarde (21.0): de aanroeper
     // kan Thermostat("Verwarming") schrijven (gebruikt dan 21 graden),
     // of expliciet Thermostat("Verwarming", 18.5) om een andere
-    // starttemperatuur op te geven -- zonder dat er twee aparte
-    // constructors nodig zijn.
+    // starttemperatuur op te geven.
     Thermostat(std::string name, double targetTemperature = 21.0);
 
     void toggle() override;
     std::string status() const override;
     std::unique_ptr<Device> clone() const override;
+
+    // vraag 23 (Object Georiënteerde Project - Aanvullend): useful getters and setters for member variables
+    // Getter: geeft de huidige doeltemperatuur terug.
+    double getTargetTemperature() const;
+
+    // vraag 23 (Object Georiënteerde Project - Aanvullend): useful getters and setters for member variables
+    // Setter met validatie: begrenst de temperatuur tussen 10 en 30
+    // graden (een realistisch bereik voor een thermostaat), i.p.v.
+    // elke willekeurige waarde toe te laten -- dit is wat de setter
+    // écht nuttig maakt.
+    void setTargetTemperature(double value);
 
 private:
     double targetTemperature_;

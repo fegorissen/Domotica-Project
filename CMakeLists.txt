@@ -26,6 +26,7 @@ add_executable(Smarthome
   Doorlock.h
   Camera.h
   Camera.cpp
+  MathUtils.h
 
 )
 target_link_libraries(Smarthome Qt${QT_VERSION_MAJOR}::Core)

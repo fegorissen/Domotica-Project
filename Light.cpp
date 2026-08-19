@@ -18,12 +18,12 @@ void Light::toggle()
     on_ = !on_;
 }
 
+// vraag 24 (Object Georiënteerde Project - Aanvullend): correct usage of inline function
+// Gebruikt de inline functie onOffText() uit Device.h i.p.v. hier
+// opnieuw een if/else te schrijven.
 std::string Light::status() const
 {
-    if (on_)
-        return "aan";
-    else
-        return "uit";
+    return onOffText(on_);
 }
 
 std::unique_ptr<Device> Light::clone() const

@@ -11,9 +11,7 @@ unsigned char Device::nextId_ = 1;
 // Het stuk na de ":" is de member-initialisatielijst -- name_ en id_
 // worden hier DIRECT met hun juiste waarde aangemaakt, in plaats van
 // eerst met een default-waarde aangemaakt te worden en pas daarna in
-// het { }-blok overschreven te worden. Dit gebeurt consequent in élke
-// constructor doorheen het project (zie ook Room.cpp, Light.cpp,
-// Thermostat.cpp, Doorlock.cpp, Camera.cpp).
+// het { }-blok overschreven te worden.
 Device::Device(std::string name)
     : name_(name), id_(nextId_++)
 {
@@ -22,6 +20,17 @@ Device::Device(std::string name)
 std::string Device::getName() const
 {
     return name_;
+}
+
+// vraag 23 (Object Georiënteerde Project - Aanvullend): useful getters and setters for member variables
+// Weigert een lege naam -- de kern van waarom dit een NUTTIGE setter
+// is: er zit echte logica in, niet enkel een blinde toewijzing.
+void Device::setName(const std::string& name)
+{
+    if (!name.empty())
+    {
+        name_ = name;
+    }
 }
 
 bool Device::isOn() const
