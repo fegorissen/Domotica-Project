@@ -1,24 +1,27 @@
 #include "Doorlock.h"
 
-DoorLock::DoorLock(std::string name)
-    : Device(name)
+namespace smarthome
 {
-}
+    DoorLock::DoorLock(std::string name)
+        : Device(name)
+    {
+    }
 
-void DoorLock::toggle()
-{
-    on_ = !on_;
-}
+    void DoorLock::toggle()
+    {
+        on_ = !on_;
+    }
 
-std::string DoorLock::status() const
-{
-    if (on_)
-        return "vergrendeld";
-    else
-        return "ontgrendeld";
-}
+    std::string DoorLock::status() const
+    {
+        if (on_)
+            return "vergrendeld";
+        else
+            return "ontgrendeld";
+    }
 
-std::unique_ptr<Device> DoorLock::clone() const
-{
-    return std::make_unique<DoorLock>(*this);
+    std::unique_ptr<Device> DoorLock::clone() const
+    {
+        return std::make_unique<DoorLock>(*this);
+    }
 }

@@ -1,6 +1,8 @@
 #pragma once
 #include "Device.h"
 
+namespace smarthome
+{
 class Camera : public Device
 {
 public:
@@ -14,7 +16,8 @@ public:
 
 private:
     // vraag 5: useful and correct encapsulation
-    // motionDetected_ is private: enkel bereikbaar via triggerMotion()
-    // en indirect via status().
+    // motionDetected_ is private: enkel bereikbaar via
+    // triggerMotion() en indirect via status().
     bool motionDetected_ = false;
 };
+}

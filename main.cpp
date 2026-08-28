@@ -6,6 +6,14 @@
 #include "Camera.h"
 #include "Room.h"
 
+// vraag 27 (Object Georiënteerde Project - Aanvullend): everything in
+// one or more self-made namespace(s)
+// Alle klassen van dit project (Device, Light, Thermostat, DoorLock,
+// Camera, Room) zitten in de zelfgemaakte namespace "smarthome". Deze
+// "using"-declaratie laat ons in main.cpp gewoon Room/Light/... blijven
+// schrijven i.p.v. overal smarthome::Room te moeten typen.
+using namespace smarthome;
+
 // vraag 5 (Object Georiënteerde Project - Aanvullend): maintainability
 // Dit geldt voor het volledige project, niet één regel: consistente
 // naming (member variables eindigen op _, functies zijn camelCase,
