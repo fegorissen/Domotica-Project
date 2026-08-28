@@ -23,6 +23,12 @@ namespace smarthome
             return "opname (rustig)";
     }
 
+    // vraag 36 (Object Georiënteerde Project - Aanvullend): useful container class
+    std::string Camera::getTypeName() const
+    {
+        return "Camera";
+    }
+
     std::unique_ptr<Device> Camera::clone() const
     {
         return std::make_unique<Camera>(*this);

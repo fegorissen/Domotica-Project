@@ -4,8 +4,6 @@
 namespace smarthome
 {
 // vraag 6: useful and correct inheritance
-// Light "is-a" Device: erft de volledige interface via public
-// inheritance en voegt enkel zijn eigen data (brightness_) toe.
 class Light : public Device
 {
 public:
@@ -20,6 +18,7 @@ public:
 
     void toggle() override;
     std::string status() const override;
+    std::string getTypeName() const override;
     std::unique_ptr<Device> clone() const override;
 
     // vraag 23 (Object Georiënteerde Project - Aanvullend): useful getters and setters for member variables
@@ -27,13 +26,7 @@ public:
     void setBrightness(unsigned char value);
 
 private:
-    // vraag 28 (Object Georiënteerde Project - Aanvullend): 2 useful
-    // unsigned chars or other better usage of memory efficient type
-    // Helderheid gaat van 0 tot 100(%) -- een unsigned char (1
-    // byte, bereik 0-255) is hiervoor ruim voldoende en veel
-    // geheugenefficiënter dan bv. een int (4 bytes) voor een
-    // waarde die toch nooit groter dan 100 wordt. Dit is het
-    // TWEEDE voorbeeld naast Device::id_/nextId_.
+    // vraag 28 (Object Georiënteerde Project - Aanvullend): 2 useful unsigned chars or other better usage of memory efficient type
     unsigned char brightness_ = 80;
 };
 }

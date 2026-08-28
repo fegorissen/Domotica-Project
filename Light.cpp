@@ -8,7 +8,6 @@ namespace smarthome
     {
     }
 
-    // vraag 17 (Object Georiënteerde Project - Aanvullend): constructor forwarding
     Light::Light()
         : Light("Unnamed Light")
     {
@@ -19,7 +18,6 @@ namespace smarthome
         on_ = !on_;
     }
 
-    // vraag 24 (Object Georiënteerde Project - Aanvullend): correct usage of inline function
     std::string Light::status() const
     {
         if (!on_)
@@ -27,6 +25,12 @@ namespace smarthome
             return onOffText(on_);
         }
         return "aan (helderheid " + std::to_string(static_cast<int>(brightness_)) + "%)";
+    }
+
+    // vraag 36 (Object Georiënteerde Project - Aanvullend): useful container class
+    std::string Light::getTypeName() const
+    {
+        return "Light";
     }
 
     std::unique_ptr<Device> Light::clone() const
@@ -39,10 +43,6 @@ namespace smarthome
         return brightness_;
     }
 
-    // vraag 25 (Object Georiënteerde Project - Aanvullend): useful template function or class
-    // Hergebruikt dezelfde clamp<T>()-template als Thermostat, nu voor
-    // het type unsigned char in plaats van double -- exact waarom een
-    // template nuttig is: één functie, meerdere types.
     void Light::setBrightness(unsigned char value)
     {
         brightness_ = clamp<unsigned char>(value, 0, 100);

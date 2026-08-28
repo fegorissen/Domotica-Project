@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
+#include <map>
 #include <memory>
 #include "Device.h"
 
@@ -41,11 +42,14 @@ public:
     const std::vector<std::unique_ptr<Device>>& devices() const;
 
     // vraag 35 (Object Georiënteerde Project - Aanvullend): useful string class usage
-    // Gebruikt std::string::find() om te zoeken of 'searchTerm'
-    // ERGENS in de devicenaam voorkomt (niet enkel exacte match
-    // zoals findDevice()). find() geeft std::string::npos terug
-    // als de tekst niet gevonden wordt.
     int countDevicesContaining(const std::string& searchTerm) const;
+
+    // vraag 36 (Object Georiënteerde Project - Aanvullend): useful container class
+    // std::map houdt sleutel-waarde paren bij (typenaam -> aantal),
+    // in tegenstelling tot de eenvoudige, geordende lijst van
+    // std::vector. Nuttig om snel op te zoeken hoeveel devices van
+    // elk type in deze kamer staan.
+    std::map<std::string, int> countDevicesByType() const;
 
 private:
     std::string name_;

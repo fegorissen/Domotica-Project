@@ -13,9 +13,6 @@ using namespace smarthome;
 
 // vraag 34 (Object Georiënteerde Project - Aanvullend): 2 useful
 // (modern) call-by-references (2/2)
-// 'room' wordt als NIET-const referentie doorgegeven: deze functie
-// zou het object kunnen wijzigen indien nodig, zonder kopie of
-// pointer-syntax.
 void printActiveDeviceCount(Room& room)
 {
     int count = 0;
@@ -102,9 +99,16 @@ int main()
     // vraag 34 (Object Georiënteerde Project - Aanvullend): 2 useful (modern) call-by-references (bewijs)
     printActiveDeviceCount(livingRoom);
 
+    // vraag 36 (Object Georiënteerde Project - Aanvullend): useful container class (bewijs)
+    // std::map<std::string, int> houdt hier per devicetype het aantal
+    // bij, automatisch geordend op sleutel (alfabetisch op typenaam).
+    std::cout << "--- devices per type (std::map) ---" << std::endl;
+    for (const auto& pair : livingRoom.countDevicesByType())
+    {
+        std::cout << "  " << pair.first << ": " << pair.second << std::endl;
+    }
+
     // vraag 35 (Object Georiënteerde Project - Aanvullend): useful string class usage (bewijs)
-    // countDevicesContaining gebruikt std::string::find() om te zoeken
-    // naar het zoekterm "lamp" ergens in elke devicenaam.
     int lampCount = livingRoom.countDevicesContaining("lamp");
     std::cout << "Aantal devices met 'lamp' in de naam: " << lampCount << std::endl;
 
@@ -117,7 +121,6 @@ int main()
         std::cout << "--- na poging tot 999 graden (clamp-test) ---" << std::endl;
         std::cout << "  Verwarming: " << thermostaat->status() << std::endl;
 
-        // vraag 34 (Object Georiënteerde Project - Aanvullend): 2 useful (modern) call-by-references (bewijs)
         applyEnergySavingMode(*thermostaat, 5.0);
         log.add("Energiebesparingsmodus toegepast (-5 graden)");
         std::cout << "--- na energiebesparingsmodus (-5 graden) ---" << std::endl;

@@ -28,6 +28,12 @@ std::string Thermostat::status() const
         return "uit";
 }
 
+// vraag 36 (Object Georiënteerde Project - Aanvullend): useful container class
+std::string Thermostat::getTypeName() const
+{
+    return "Thermostat";
+}
+
 std::unique_ptr<Device> Thermostat::clone() const
 {
     return std::make_unique<Thermostat>(*this);
@@ -38,14 +44,12 @@ double Thermostat::getTargetTemperature() const
     return targetTemperature_;
 }
 
-// vraag 25 (Object Georiënteerde Project - Aanvullend): useful template function or class
 void Thermostat::setTargetTemperature(double value)
 {
     targetTemperature_ = clamp(value, MIN_TEMP, MAX_TEMP);
 }
 
-// vraag 34 (Object Georiënteerde Project - Aanvullend): 2 useful
-// (modern) call-by-references (1/2)
+// vraag 34 (Object Georiënteerde Project - Aanvullend): 2 useful (modern) call-by-references (1/2)
 void applyEnergySavingMode(Thermostat& thermostat, double degreesLower)
 {
     thermostat.setTargetTemperature(thermostat.getTargetTemperature() - degreesLower);
