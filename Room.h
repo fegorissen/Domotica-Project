@@ -34,6 +34,7 @@ public:
 
     // vraag 20 (Object Georiënteerde Project - Aanvullend): useful member function
     // vraag 30 (Object Georiënteerde Project - Aanvullend): at least 4 useful const references for functions (5/5)
+    // vraag 37 (Object Georiënteerde Project - Aanvullend): useful usage of nullptr
     Device* findDevice(const std::string& name) const;
 
     void printAllDevices() const;
@@ -45,11 +46,20 @@ public:
     int countDevicesContaining(const std::string& searchTerm) const;
 
     // vraag 36 (Object Georiënteerde Project - Aanvullend): useful container class
-    // std::map houdt sleutel-waarde paren bij (typenaam -> aantal),
-    // in tegenstelling tot de eenvoudige, geordende lijst van
-    // std::vector. Nuttig om snel op te zoeken hoeveel devices van
-    // elk type in deze kamer staan.
     std::map<std::string, int> countDevicesByType() const;
+
+    // vraag 38 (Object Georiënteerde Project - Aanvullend): useful
+    // usage of (modern) file-I/O
+    // Slaat elk device op als "type|naam|aan-of-uit" per regel,
+    // via std::ofstream (modern C++ file-I/O, geen FILE*/fopen).
+    void saveToFile(const std::string& path) const;
+
+    // vraag 38 (Object Georiënteerde Project - Aanvullend): useful
+    // usage of (modern) file-I/O
+    // Leest het bestand terug via std::ifstream en reconstrueert
+    // elk device via de factory (zie DeviceFactory.h), gebaseerd
+    // op de opgeslagen typenaam.
+    void loadFromFile(const std::string& path);
 
 private:
     std::string name_;

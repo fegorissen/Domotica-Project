@@ -29,6 +29,8 @@ add_executable(Smarthome
   MathUtils.h
   LogHistory.h
   LogHistory.cpp
+  DeviceFactory.cpp
+  DeviceFactory.h
 
 )
 target_link_libraries(Smarthome Qt${QT_VERSION_MAJOR}::Core)

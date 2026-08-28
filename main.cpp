@@ -100,8 +100,6 @@ int main()
     printActiveDeviceCount(livingRoom);
 
     // vraag 36 (Object Georiënteerde Project - Aanvullend): useful container class (bewijs)
-    // std::map<std::string, int> houdt hier per devicetype het aantal
-    // bij, automatisch geordend op sleutel (alfabetisch op typenaam).
     std::cout << "--- devices per type (std::map) ---" << std::endl;
     for (const auto& pair : livingRoom.countDevicesByType())
     {
@@ -142,6 +140,21 @@ int main()
 
     std::cout << "--- kopie (Woonkamerlamp getoggled) ---" << std::endl;
     roomCopy.printAllDevices();
+
+    // vraag 38 (Object Georiënteerde Project - Aanvullend): useful usage
+    // of (modern) file-I/O (bewijs)
+    // Slaat livingRoom op naar een bestand, maakt dan een compleet
+    // NIEUWE, lege Room aan, laadt het bestand erin, en toont dat de
+    // inhoud correct teruggekomen is -- inclusief de aan/uit-status.
+    livingRoom.saveToFile("smarthome_save.txt");
+    log.add("Woonkamer opgeslagen naar smarthome_save.txt");
+
+    Room loadedRoom("Geladen Kamer");
+    loadedRoom.loadFromFile("smarthome_save.txt");
+    log.add("Kamer geladen vanuit smarthome_save.txt");
+
+    std::cout << "--- geladen vanuit bestand ---" << std::endl;
+    loadedRoom.printAllDevices();
 
     std::cout << "--- logboek (LogHistory, new[]/delete[]) ---" << std::endl;
     log.printAll(std::cout);

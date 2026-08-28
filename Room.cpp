@@ -1,5 +1,8 @@
 #include "Room.h"
+#include "DeviceFactory.h"
 #include <iostream>
+#include <fstream>
+#include <sstream>
 #include <utility>
 
 namespace smarthome
@@ -76,7 +79,6 @@ namespace smarthome
         return devices_;
     }
 
-    // vraag 35 (Object Georiënteerde Project - Aanvullend): useful string class usage
     int Room::countDevicesContaining(const std::string& searchTerm) const
     {
         int count = 0;
@@ -90,7 +92,6 @@ namespace smarthome
         return count;
     }
 
-    // vraag 36 (Object Georiënteerde Project - Aanvullend): useful container class
     std::map<std::string, int> Room::countDevicesByType() const
     {
         std::map<std::string, int> counts;
@@ -99,5 +100,64 @@ namespace smarthome
             ++counts[device->getTypeName()];
         }
         return counts;
+    }
+
+    // vraag 38 (Object Georiënteerde Project - Aanvullend): useful usage of (modern) file-I/O
+    void Room::saveToFile(const std::string& path) const
+    {
+        std::ofstream out(path);
+        if (!out.is_open())
+        {
+            std::cout << "Kon bestand niet openen om op te slaan: " << path << std::endl;
+            return;
+        }
+
+        for (const auto& device : devices_)
+        {
+            out << device->getTypeName() << '|' << device->getName() << '|'
+                << (device->isOn() ? 1 : 0) << '\n';
+        }
+    }
+
+    // vraag 38 (Object Georiënteerde Project - Aanvullend): useful usage of (modern) file-I/O
+    void Room::loadFromFile(const std::string& path)
+    {
+        std::ifstream in(path);
+        if (!in.is_open())
+        {
+            std::cout << "Kon bestand niet openen om te laden: " << path << std::endl;
+            return;
+        }
+
+        devices_.clear();
+
+        std::string line;
+        while (std::getline(in, line))
+        {
+            if (line.empty())
+            {
+                continue;
+            }
+
+            std::istringstream iss(line);
+            std::string typeName, deviceName, onStr;
+            std::getline(iss, typeName, '|');
+            std::getline(iss, deviceName, '|');
+            std::getline(iss, onStr, '|');
+
+            auto device = createDeviceFromType(typeName, deviceName);
+            if (device == nullptr)
+            {
+                continue;
+            }
+
+            bool wasOn = (onStr == "1");
+            if (wasOn != device->isOn())
+            {
+                device->toggle();
+            }
+
+            devices_.push_back(std::move(device));
+        }
     }
 }
