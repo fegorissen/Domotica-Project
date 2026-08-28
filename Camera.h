@@ -16,8 +16,8 @@ public:
 
 private:
     // vraag 5: useful and correct encapsulation
-    // motionDetected_ is private: enkel bereikbaar via
-    // triggerMotion() en indirect via status().
+    // vraag 31 (Object Georiënteerde Project - Aanvullend): at least
+    // 4 useful bool (2/4)
     bool motionDetected_ = false;
 };
 }

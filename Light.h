@@ -22,7 +22,18 @@ public:
     std::string status() const override;
     std::unique_ptr<Device> clone() const override;
 
+    // vraag 23 (Object Georiënteerde Project - Aanvullend): useful getters and setters for member variables
+    unsigned char getBrightness() const;
+    void setBrightness(unsigned char value);
+
 private:
-    bool brightness_ = 80;
+    // vraag 28 (Object Georiënteerde Project - Aanvullend): 2 useful
+    // unsigned chars or other better usage of memory efficient type
+    // Helderheid gaat van 0 tot 100(%) -- een unsigned char (1
+    // byte, bereik 0-255) is hiervoor ruim voldoende en veel
+    // geheugenefficiënter dan bv. een int (4 bytes) voor een
+    // waarde die toch nooit groter dan 100 wordt. Dit is het
+    // TWEEDE voorbeeld naast Device::id_/nextId_.
+    unsigned char brightness_ = 80;
 };
 }

@@ -17,12 +17,14 @@ namespace smarthome
 
     // vraag 14 (Object Georiënteerde Project - Aanvullend): at least 2 copy constructors
     // vraag 18 (Object Georiënteerde Project - Aanvullend): useful proven (dynamic) polymorphism
-    // Diepe kopie: voor elk device in 'other' wordt clone()
-    // aangeroepen, wat een volledig nieuw, onafhankelijk
-    // Device-object maakt van het juiste, concrete type.
     Room::Room(const Room& other)
         : name_(other.name_)
     {
+        // vraag 29 (Object Georiënteerde Project - Aanvullend): at least
+        // 4 useful const references for variables (1/4)
+        // 'device' is een const reference: geen kopie van de
+        // unique_ptr (die is sowieso niet kopieerbaar), en de lus kan
+        // 'other' niet per ongeluk wijzigen.
         for (const auto& device : other.devices_)
         {
             devices_.push_back(device->clone());
@@ -30,10 +32,6 @@ namespace smarthome
     }
 
     // vraag 19 (Object Georiënteerde Project - Aanvullend): useful usage of "this"
-    // De check "if (this == &other)" vergelijkt het geheugenadres van
-    // het huidige object met het adres van de parameter -- dit kan
-    // ENKEL met "this". Zonder deze check zou "room = room;" tot
-    // dataverlies leiden.
     Room& Room::operator=(const Room& other)
     {
         if (this == &other)
@@ -43,6 +41,8 @@ namespace smarthome
 
         name_ = other.name_;
         devices_.clear();
+        // vraag 29 (Object Georiënteerde Project - Aanvullend): at least
+        // 4 useful const references for variables (2/4)
         for (const auto& device : other.devices_)
         {
             devices_.push_back(device->clone());
@@ -65,6 +65,8 @@ namespace smarthome
     // vraag 20 (Object Georiënteerde Project - Aanvullend): useful member function
     Device* Room::findDevice(const std::string& name) const
     {
+        // vraag 29 (Object Georiënteerde Project - Aanvullend): at least
+        // 4 useful const references for variables (3/4)
         for (const auto& device : devices_)
         {
             if (device->getName() == name)
@@ -79,6 +81,8 @@ namespace smarthome
     void Room::printAllDevices() const
     {
         std::cout << "Kamer: " << name_ << std::endl;
+        // vraag 29 (Object Georiënteerde Project - Aanvullend): at least
+        // 4 useful const references for variables (4/4)
         for (const auto& device : devices_)
         {
             std::cout << "  " << device->getName() << ": " << device->status() << std::endl;
