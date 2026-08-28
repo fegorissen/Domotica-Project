@@ -19,13 +19,11 @@ public:
     Room();
 
     // vraag 14 (Object Georiënteerde Project - Aanvullend): at least 2 copy constructors
-    // vraag 30 (Object Georiënteerde Project - Aanvullend): at least
-    // 4 useful const references for functions (3/5)
+    // vraag 30 (Object Georiënteerde Project - Aanvullend): at least 4 useful const references for functions (3/5)
     Room(const Room& other);
 
     // vraag 19 (Object Georiënteerde Project - Aanvullend): useful usage of "this"
-    // vraag 30 (Object Georiënteerde Project - Aanvullend): at least
-    // 4 useful const references for functions (4/5)
+    // vraag 30 (Object Georiënteerde Project - Aanvullend): at least 4 useful const references for functions (4/5)
     Room& operator=(const Room& other);
 
     // vraag 15 (Object Georiënteerde Project - Aanvullend): at least 2 destructors
@@ -34,11 +32,17 @@ public:
     void addDevice(std::unique_ptr<Device> device);
 
     // vraag 20 (Object Georiënteerde Project - Aanvullend): useful member function
-    // vraag 30 (Object Georiënteerde Project - Aanvullend): at least
-    // 4 useful const references for functions (5/5)
+    // vraag 30 (Object Georiënteerde Project - Aanvullend): at least 4 useful const references for functions (5/5)
     Device* findDevice(const std::string& name) const;
 
     void printAllDevices() const;
+
+    // vraag 34 (Object Georiënteerde Project - Aanvullend): 2 useful
+    // (modern) call-by-references (2/2)
+    // Geeft toegang tot devices_ zodat externe functies (zie
+    // printActiveDeviceCount in main.cpp) door de devices kunnen
+    // loopen zonder de vector te kopiëren.
+    const std::vector<std::unique_ptr<Device>>& devices() const;
 
 private:
     std::string name_;

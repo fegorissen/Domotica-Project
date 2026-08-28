@@ -43,4 +43,11 @@ void Thermostat::setTargetTemperature(double value)
 {
     targetTemperature_ = clamp(value, MIN_TEMP, MAX_TEMP);
 }
+
+// vraag 34 (Object Georiënteerde Project - Aanvullend): 2 useful
+// (modern) call-by-references (1/2)
+void applyEnergySavingMode(Thermostat& thermostat, double degreesLower)
+{
+    thermostat.setTargetTemperature(thermostat.getTargetTemperature() - degreesLower);
+}
 }

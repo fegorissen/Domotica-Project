@@ -20,11 +20,7 @@ namespace smarthome
     Room::Room(const Room& other)
         : name_(other.name_)
     {
-        // vraag 29 (Object Georiënteerde Project - Aanvullend): at least
-        // 4 useful const references for variables (1/4)
-        // 'device' is een const reference: geen kopie van de
-        // unique_ptr (die is sowieso niet kopieerbaar), en de lus kan
-        // 'other' niet per ongeluk wijzigen.
+        // vraag 29 (Object Georiënteerde Project - Aanvullend): at least 4 useful const references for variables (1/4)
         for (const auto& device : other.devices_)
         {
             devices_.push_back(device->clone());
@@ -41,8 +37,7 @@ namespace smarthome
 
         name_ = other.name_;
         devices_.clear();
-        // vraag 29 (Object Georiënteerde Project - Aanvullend): at least
-        // 4 useful const references for variables (2/4)
+        // vraag 29 (Object Georiënteerde Project - Aanvullend): at least 4 useful const references for variables (2/4)
         for (const auto& device : other.devices_)
         {
             devices_.push_back(device->clone());
@@ -65,8 +60,7 @@ namespace smarthome
     // vraag 20 (Object Georiënteerde Project - Aanvullend): useful member function
     Device* Room::findDevice(const std::string& name) const
     {
-        // vraag 29 (Object Georiënteerde Project - Aanvullend): at least
-        // 4 useful const references for variables (3/4)
+        // vraag 29 (Object Georiënteerde Project - Aanvullend): at least 4 useful const references for variables (3/4)
         for (const auto& device : devices_)
         {
             if (device->getName() == name)
@@ -81,11 +75,15 @@ namespace smarthome
     void Room::printAllDevices() const
     {
         std::cout << "Kamer: " << name_ << std::endl;
-        // vraag 29 (Object Georiënteerde Project - Aanvullend): at least
-        // 4 useful const references for variables (4/4)
+        // vraag 29 (Object Georiënteerde Project - Aanvullend): at least 4 useful const references for variables (4/4)
         for (const auto& device : devices_)
         {
             std::cout << "  " << device->getName() << ": " << device->status() << std::endl;
         }
+    }
+
+    const std::vector<std::unique_ptr<Device>>& Room::devices() const
+    {
+        return devices_;
     }
 }

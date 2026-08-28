@@ -27,6 +27,8 @@ add_executable(Smarthome
   Camera.h
   Camera.cpp
   MathUtils.h
+  LogHistory.h
+  LogHistory.cpp
 
 )
 target_link_libraries(Smarthome Qt${QT_VERSION_MAJOR}::Core)
