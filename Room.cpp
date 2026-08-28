@@ -86,4 +86,21 @@ namespace smarthome
     {
         return devices_;
     }
+
+    // vraag 35 (Object Georiënteerde Project - Aanvullend): useful string class usage
+    int Room::countDevicesContaining(const std::string& searchTerm) const
+    {
+        int count = 0;
+        for (const auto& device : devices_)
+        {
+            // find() zoekt 'searchTerm' ergens in de naam en geeft de
+            // positie terug, of std::string::npos ("not found") als
+            // het er niet in staat.
+            if (device->getName().find(searchTerm) != std::string::npos)
+            {
+                ++count;
+            }
+        }
+        return count;
+    }
 }

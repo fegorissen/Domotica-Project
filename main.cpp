@@ -102,6 +102,12 @@ int main()
     // vraag 34 (Object Georiënteerde Project - Aanvullend): 2 useful (modern) call-by-references (bewijs)
     printActiveDeviceCount(livingRoom);
 
+    // vraag 35 (Object Georiënteerde Project - Aanvullend): useful string class usage (bewijs)
+    // countDevicesContaining gebruikt std::string::find() om te zoeken
+    // naar het zoekterm "lamp" ergens in elke devicenaam.
+    int lampCount = livingRoom.countDevicesContaining("lamp");
+    std::cout << "Aantal devices met 'lamp' in de naam: " << lampCount << std::endl;
+
     // vraag 25 (Object Georiënteerde Project - Aanvullend): useful template function or class (bewijs)
     Thermostat* thermostaat = dynamic_cast<Thermostat*>(thermostaatDevice);
     if (thermostaat != nullptr)
@@ -112,8 +118,6 @@ int main()
         std::cout << "  Verwarming: " << thermostaat->status() << std::endl;
 
         // vraag 34 (Object Georiënteerde Project - Aanvullend): 2 useful (modern) call-by-references (bewijs)
-        // applyEnergySavingMode ontvangt *thermostaat als referentie en
-        // wijzigt het object rechtstreeks (geen kopie, geen pointer).
         applyEnergySavingMode(*thermostaat, 5.0);
         log.add("Energiebesparingsmodus toegepast (-5 graden)");
         std::cout << "--- na energiebesparingsmodus (-5 graden) ---" << std::endl;

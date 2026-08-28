@@ -37,12 +37,15 @@ public:
 
     void printAllDevices() const;
 
-    // vraag 34 (Object Georiënteerde Project - Aanvullend): 2 useful
-    // (modern) call-by-references (2/2)
-    // Geeft toegang tot devices_ zodat externe functies (zie
-    // printActiveDeviceCount in main.cpp) door de devices kunnen
-    // loopen zonder de vector te kopiëren.
+    // vraag 34 (Object Georiënteerde Project - Aanvullend): 2 useful (modern) call-by-references (2/2)
     const std::vector<std::unique_ptr<Device>>& devices() const;
+
+    // vraag 35 (Object Georiënteerde Project - Aanvullend): useful string class usage
+    // Gebruikt std::string::find() om te zoeken of 'searchTerm'
+    // ERGENS in de devicenaam voorkomt (niet enkel exacte match
+    // zoals findDevice()). find() geeft std::string::npos terug
+    // als de tekst niet gevonden wordt.
+    int countDevicesContaining(const std::string& searchTerm) const;
 
 private:
     std::string name_;
