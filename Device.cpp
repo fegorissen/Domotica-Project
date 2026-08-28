@@ -42,3 +42,15 @@ unsigned char Device::getId() const
 {
     return id_;
 }
+
+// vraag 26 (Object Georiënteerde Project - Aanvullend): useful friend function or class
+// Rechtstreekse toegang tot device.id_ (private), dankzij de friend-
+// declaratie in Device.h. status() is virtual en dus polymorf: dit
+// print automatisch het juiste, type-specifieke statusbericht voor
+// elk concreet device.
+std::ostream& operator<<(std::ostream& os, const Device& device)
+{
+    os << "[#" << static_cast<int>(device.id_) << "] " << device.name_
+       << ": " << device.status();
+    return os;
+}

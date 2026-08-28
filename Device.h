@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <memory>
+#include <ostream>
 
 // vraag 24 (Object Georiënteerde Project - Aanvullend): correct usage of inline function
 // Klein, veelgebruikt hulpfunctietje dat in de header staat. Elke .cpp
@@ -8,7 +9,7 @@
 // Camera.cpp, Room.cpp) krijgt zijn eigen kopie van deze functie op
 // compile-tijd. Zonder "inline" zou dit een linker-fout geven
 // ("multiple definition of onOffText") zodra meer dan één .cpp-bestand
-// deze header include -- wat hier letterlijk het geval is.
+// deze header include.
 inline std::string onOffText(bool on)
 {
     return on ? "aan" : "uit";
@@ -61,6 +62,16 @@ public:
     // vraag 20 (Object Georiënteerde Project - Aanvullend): useful member function
     // Geeft het unieke ID van dit device terug, toegekend bij aanmaak.
     unsigned char getId() const;
+
+    // vraag 26 (Object Georiënteerde Project - Aanvullend): useful friend function or class
+    // operator<< heeft toegang nodig tot het PRIVATE id_-veld, dat
+    // bewust geen eigen publieke getter/gebruik heeft buiten dit
+    // debug-printformaat. Zonder friend zou dit ofwel een publieke
+    // "debug getter" vereisen (wat encapsulatie verzwakt door id_ ook
+    // voor andere doeleinden bruikbaar te maken), ofwel onmogelijk
+    // zijn. Dit is een correcte, gerechtvaardigde uitzondering op
+    // encapsulatie, geen manier om ze te omzeilen.
+    friend std::ostream& operator<<(std::ostream& os, const Device& device);
 
     // vraag 4 (Object Georiënteerde Project - Aanvullend): correct protections
     // protected: name_/on_ zijn nodig in de afgeleide klassen (Light/

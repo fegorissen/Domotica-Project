@@ -64,6 +64,15 @@ int main()
         lamp->toggle();
     }
 
+    // vraag 26 (Object Georiënteerde Project - Aanvullend): useful friend function or class (bewijs)
+    // operator<< print hier het device via std::cout, inclusief het
+    // PRIVATE id_-veld (via friend-toegang) dat nergens anders publiek
+    // zichtbaar is. Zichtbaar in de output als "[#1] Woonkamerlamp: aan".
+    if (lamp != nullptr)
+    {
+        std::cout << *lamp << std::endl;
+    }
+
     Device* deur = livingRoom.findDevice("Voordeur");
     if (deur != nullptr)
     {
