@@ -6,26 +6,26 @@
 #include <QPushButton>
 #include <QFrame>
 #include <QLineEdit>
+#include <QComboBox>
 #include <vector>
-#include "Room.h"
+#include "House.h"
 #include "LogHistory.h"
+#include "RuleEngine.h"
 
 namespace smarthome
 {
     // vraag 47 (Object Georiënteerde Project - Aanvullend): usage of a GUI
-    // Volwaardig dashboard bovenop de bestaande Room/Device-logica:
-    // titelbalk, live teller, typeteller (std::map, vraag 36),
-    // zoekbalk (std::string::find, vraag 35), kleurgecodeerde
-    // statuskaarten met icoon en badge, toggle-knoppen, device
-    // toevoegen via dialoog, motion-simulatie met visuele flits,
-    // reset, opslaan/laden (JSON, vraag 49), en een statusbalk die de
-    // laatste actie toont via LogHistory (vraag 32/33/42).
+    // vraag 51 (Object Georiënteerde Project - Aanvullend): nice extra (House)
+    // SmartHomeWindow ontvangt nu een volledig House (i.p.v. één losse
+    // Room) en toont een dropdown om tussen kamers te wisselen. Alle
+    // bestaande functionaliteit (toggle, save/load, motion, rules)
+    // werkt op de momenteel GESELECTEERDE kamer.
     class SmartHomeWindow : public QWidget
     {
         Q_OBJECT
 
     public:
-        explicit SmartHomeWindow(Room& room, QWidget* parent = nullptr);
+        explicit SmartHomeWindow(House& house, QWidget* parent = nullptr);
 
     private slots:
         void onToggleClicked(int deviceIndex);
@@ -35,16 +35,23 @@ namespace smarthome
         void onSimulateMotionClicked();
         void onResetClicked();
         void onSearchTextChanged(const QString& text);
+        void onRoomChanged(int index);
 
     private:
+        Room& currentRoom();
+        void populateRoomSelector();
+        void rebuildForCurrentRoom();
         void buildUi();
         void addDeviceRow(std::size_t index);
         void refreshLabels();
         void logAction(const std::string& message);
+        void setupAutomationRules();
         QString iconForType(const std::string& typeName) const;
 
-        Room& room_;
+        House& house_;
         LogHistory log_;
+        RuleEngine ruleEngine_;
+        QComboBox* roomSelector_;
         QVBoxLayout* deviceListLayout_;
         QLabel* activeCountLabel_;
         QLabel* typeCounterLabel_;

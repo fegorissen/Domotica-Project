@@ -1,6 +1,7 @@
 #include "SmartHomeWindow.h"
 #include "DeviceFactory.h"
 #include "Camera.h"
+#include "Light.h"
 #include <QMessageBox>
 #include <QInputDialog>
 #include <QLineEdit>
@@ -10,13 +11,12 @@
 
 namespace smarthome
 {
-    SmartHomeWindow::SmartHomeWindow(Room& room, QWidget* parent)
-        : QWidget(parent), room_(room)
+    SmartHomeWindow::SmartHomeWindow(House& house, QWidget* parent)
+        : QWidget(parent), house_(house)
     {
         setWindowTitle("Smart Home Simulator");
         setMinimumWidth(560);
 
-        // vraag 47 (Object Georiënteerde Project - Aanvullend): usage of a GUI
         setStyleSheet(
             "QWidget { background-color: #1e1f26; color: #e8e8e8; font-family: 'Segoe UI'; }"
             "QPushButton { background-color: #33364a; border: none; border-radius: 6px;"
@@ -25,7 +25,7 @@ namespace smarthome
             "QPushButton:pressed { background-color: #2a2c3d; }"
             "QFrame#card { background-color: #262836; border-radius: 10px; }"
             "QFrame#card:hover { background-color: #2e3145; }"
-            "QLineEdit { background-color: #2a2c3d; border: 1px solid #3a3d52;"
+            "QLineEdit, QComboBox { background-color: #2a2c3d; border: 1px solid #3a3d52;"
             "  border-radius: 6px; padding: 6px 10px; color: #e8e8e8; }"
         );
 
@@ -33,23 +33,28 @@ namespace smarthome
         outerLayout->setSpacing(14);
         outerLayout->setContentsMargins(20, 20, 20, 20);
 
-        auto* title = new QLabel("🏠  Smart Home Dashboard");
+        auto* title = new QLabel("🏠  Smart Home Dashboard — " + QString::fromStdString(house_.getName()));
         QFont titleFont = title->font();
         titleFont.setPointSize(16);
         titleFont.setBold(true);
         title->setFont(titleFont);
         outerLayout->addWidget(title);
 
+        // vraag 51 (Object Georiënteerde Project - Aanvullend): nice extra (House)
+        // Dropdown om tussen kamers van het huis te wisselen.
+        roomSelector_ = new QComboBox();
+        connect(roomSelector_, QOverload<int>::of(&QComboBox::currentIndexChanged),
+                this, &SmartHomeWindow::onRoomChanged);
+        outerLayout->addWidget(roomSelector_);
+
         activeCountLabel_ = new QLabel();
         activeCountLabel_->setStyleSheet("color: #8ea6ff; font-size: 13px;");
         outerLayout->addWidget(activeCountLabel_);
 
-        // vraag 36 (Object Georiënteerde Project - Aanvullend): useful container class
         typeCounterLabel_ = new QLabel();
         typeCounterLabel_->setStyleSheet("color: #a0a8c0; font-size: 12px;");
         outerLayout->addWidget(typeCounterLabel_);
 
-        // vraag 35 (Object Georiënteerde Project - Aanvullend): useful string class usage
         searchBox_ = new QLineEdit();
         searchBox_->setPlaceholderText("🔍 Zoek op naam...");
         connect(searchBox_, &QLineEdit::textChanged, this, &SmartHomeWindow::onSearchTextChanged);
@@ -89,7 +94,59 @@ namespace smarthome
         statusBarLabel_->setStyleSheet("color: #7a7d8f; font-size: 11px; padding-top: 6px;");
         outerLayout->addWidget(statusBarLabel_);
 
+        populateRoomSelector();
+        rebuildForCurrentRoom();
+    }
+
+    // vraag 51 (Object Georiënteerde Project - Aanvullend): nice extra (House)
+    // Geeft de Room terug die momenteel geselecteerd is in de
+    // dropdown. std::map<std::string, Room> wordt hier doorlopen op
+    // basis van de geselecteerde tekst, niet op index -- consistent
+    // met hoe House zelf kamers opzoekt (via naam, niet positie).
+    Room& SmartHomeWindow::currentRoom()
+    {
+        std::string roomName = roomSelector_->currentText().toStdString();
+        Room* room = house_.findRoom(roomName);
+        // findRoom kan in theorie nullptr geven als de selectie niet
+        // meer bestaat; in de praktijk kan dat hier niet gebeuren
+        // omdat de dropdown enkel bestaande kamernamen bevat.
+        return *room;
+    }
+
+    void SmartHomeWindow::populateRoomSelector()
+    {
+        roomSelector_->blockSignals(true);
+        roomSelector_->clear();
+        for (const auto& pair : house_.rooms())
+        {
+            roomSelector_->addItem(QString::fromStdString(pair.first));
+        }
+        roomSelector_->blockSignals(false);
+    }
+
+    void SmartHomeWindow::onRoomChanged(int /*index*/)
+    {
+        rebuildForCurrentRoom();
+    }
+
+    // vraag 51 (Object Georiënteerde Project - Aanvullend): nice extra (House)
+    // Breekt de huidige device-kaarten af en bouwt ze opnieuw op voor
+    // de nu geselecteerde kamer, en herkoppelt de automatiseringsregel
+    // aan de devices van die specifieke kamer.
+    void SmartHomeWindow::rebuildForCurrentRoom()
+    {
+        QLayoutItem* item;
+        while ((item = deviceListLayout_->takeAt(0)) != nullptr)
+        {
+            delete item->widget();
+            delete item;
+        }
+        nameLabels_.clear();
+        statusBadges_.clear();
+        deviceCards_.clear();
+
         buildUi();
+        setupAutomationRules();
     }
 
     QString SmartHomeWindow::iconForType(const std::string& typeName) const
@@ -103,7 +160,7 @@ namespace smarthome
 
     void SmartHomeWindow::buildUi()
     {
-        const auto& devices = room_.devices();
+        const auto& devices = currentRoom().devices();
         for (std::size_t i = 0; i < devices.size(); ++i)
         {
             addDeviceRow(i);
@@ -113,7 +170,7 @@ namespace smarthome
 
     void SmartHomeWindow::addDeviceRow(std::size_t index)
     {
-        const auto& devices = room_.devices();
+        const auto& devices = currentRoom().devices();
         auto* card = new QFrame();
         card->setObjectName("card");
         auto* cardLayout = new QHBoxLayout(card);
@@ -148,16 +205,17 @@ namespace smarthome
 
     void SmartHomeWindow::refreshLabels()
     {
-        const auto& devices = room_.devices();
+        Room& room = currentRoom();
+        const auto& devices = room.devices();
 
-        // vraag 40 (Object Georiënteerde Project - Aanvullend): useful usage of lambda function
-        int activeCount = room_.countDevicesIf([](const Device& d) { return d.isOn(); });
+        int activeCount = room.countDevicesIf([](const Device& d) { return d.isOn(); });
         activeCountLabel_->setText(
-            QString("● %1 van %2 devices actief").arg(activeCount).arg(devices.size()));
+            QString("● %1 van %2 devices actief in %3")
+                .arg(activeCount).arg(devices.size())
+                .arg(QString::fromStdString(room.getName())));
 
-        // vraag 36 (Object Georiënteerde Project - Aanvullend): useful container class
         QStringList parts;
-        for (const auto& pair : room_.countDevicesByType())
+        for (const auto& pair : room.countDevicesByType())
         {
             parts << QString("%1: %2").arg(QString::fromStdString(pair.first)).arg(pair.second);
         }
@@ -181,17 +239,58 @@ namespace smarthome
         }
     }
 
-    // vraag 32/33/42 (Object Georiënteerde Project - Aanvullend): LogHistory + QDateTime
     void SmartHomeWindow::logAction(const std::string& message)
     {
         log_.add(message);
         statusBarLabel_->setText(QString::fromStdString(log_.last()));
     }
 
-    // vraag 43 (Object Georiënteerde Project - Aanvullend): useful usage of signals/slots
+    void SmartHomeWindow::setupAutomationRules()
+    {
+        Room& room = currentRoom();
+        Camera* firstCamera = nullptr;
+        Light* firstLight = nullptr;
+        for (const auto& device : room.devices())
+        {
+            if (firstCamera == nullptr)
+            {
+                firstCamera = dynamic_cast<Camera*>(device.get());
+            }
+            if (firstLight == nullptr)
+            {
+                firstLight = dynamic_cast<Light*>(device.get());
+            }
+        }
+
+        if (firstCamera == nullptr || firstLight == nullptr)
+        {
+            return;
+        }
+
+        Rule securityLightRule;
+        securityLightRule.description =
+            "Beveiligingsverlichting: " + firstCamera->getName() + " detecteerde beweging -> " +
+            firstLight->getName() + " automatisch aangezet";
+        securityLightRule.condition = [firstCamera, firstLight]() {
+            return firstCamera->isMotionDetected() && !firstLight->isOn();
+        };
+        securityLightRule.action = [firstLight]() {
+            firstLight->toggle();
+        };
+        ruleEngine_.addRule(securityLightRule);
+
+        connect(firstCamera, &Camera::motionDetectedSignal,
+                &ruleEngine_, &RuleEngine::evaluateAll, Qt::DirectConnection);
+
+        connect(&ruleEngine_, &RuleEngine::ruleTriggered, this, [this](const std::string& desc) {
+            logAction("🤖 Automatisering: " + desc);
+            refreshLabels();
+        });
+    }
+
     void SmartHomeWindow::onToggleClicked(int deviceIndex)
     {
-        const auto& devices = room_.devices();
+        const auto& devices = currentRoom().devices();
         if (deviceIndex >= 0 && static_cast<std::size_t>(deviceIndex) < devices.size())
         {
             devices[deviceIndex]->toggle();
@@ -200,23 +299,22 @@ namespace smarthome
         }
     }
 
-    // vraag 38/49 (Object Georiënteerde Project - Aanvullend): file-I/O + externe library (JSON)
     void SmartHomeWindow::onSaveClicked()
     {
-        room_.saveToFile("smarthome_save.txt");
-        logAction("Kamer opgeslagen naar smarthome_save.txt");
-        QMessageBox::information(this, "Opgeslagen", "De kamer is opgeslagen naar smarthome_save.txt");
+        house_.saveToFile("house_save.json");
+        logAction("Volledig huis opgeslagen naar house_save.json");
+        QMessageBox::information(this, "Opgeslagen", "Het huis is opgeslagen naar house_save.json");
     }
 
     void SmartHomeWindow::onLoadClicked()
     {
-        room_.loadFromFile("smarthome_save.txt");
-        logAction("Kamer geladen vanuit smarthome_save.txt");
-        refreshLabels();
-        QMessageBox::information(this, "Geladen", "De kamer is geladen vanuit smarthome_save.txt");
+        house_.loadFromFile("house_save.json");
+        populateRoomSelector();
+        rebuildForCurrentRoom();
+        logAction("Huis geladen vanuit house_save.json");
+        QMessageBox::information(this, "Geladen", "Het huis is geladen vanuit house_save.json");
     }
 
-    // vraag 47 (Object Georiënteerde Project - Aanvullend): usage of a GUI
     void SmartHomeWindow::onAddDeviceClicked()
     {
         QStringList types = { "Light", "Thermostat", "DoorLock", "Camera" };
@@ -241,17 +339,14 @@ namespace smarthome
             return;
         }
 
-        room_.addDevice(std::move(device));
-        std::size_t newIndex = room_.devices().size() - 1;
-        addDeviceRow(newIndex);
+        currentRoom().addDevice(std::move(device));
+        rebuildForCurrentRoom();
         logAction(name.toStdString() + " (" + type.toStdString() + ") toegevoegd");
-        refreshLabels();
     }
 
-    // vraag 41/43 (Object Georiënteerde Project - Aanvullend): threads + signals/slots
     void SmartHomeWindow::onSimulateMotionClicked()
     {
-        const auto& devices = room_.devices();
+        const auto& devices = currentRoom().devices();
         for (std::size_t i = 0; i < devices.size(); ++i)
         {
             if (auto* camera = dynamic_cast<Camera*>(devices[i].get()))
@@ -284,10 +379,9 @@ namespace smarthome
             "Er is geen Camera-device in deze kamer.");
     }
 
-    // vraag 47 (Object Georiënteerde Project - Aanvullend): usage of a GUI
     void SmartHomeWindow::onResetClicked()
     {
-        const auto& devices = room_.devices();
+        const auto& devices = currentRoom().devices();
         for (const auto& device : devices)
         {
             if (device->isOn())
@@ -295,17 +389,13 @@ namespace smarthome
                 device->toggle();
             }
         }
-        logAction("Alle devices gereset naar uit");
+        logAction("Alle devices in " + currentRoom().getName() + " gereset naar uit");
         refreshLabels();
     }
 
-    // vraag 35 (Object Georiënteerde Project - Aanvullend): useful string class usage
-    // Toont/verbergt elke device-kaart op basis van of de naam de
-    // gezochte tekst bevat (std::string::find()). Een lege zoekterm
-    // toont alles.
     void SmartHomeWindow::onSearchTextChanged(const QString& text)
     {
-        const auto& devices = room_.devices();
+        const auto& devices = currentRoom().devices();
         std::string searchTerm = text.toStdString();
 
         for (std::size_t i = 0; i < devices.size() && i < deviceCards_.size(); ++i)

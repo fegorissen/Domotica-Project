@@ -25,9 +25,6 @@ namespace smarthome
 
     // vraag 14 (Object Georiënteerde Project - Aanvullend): at least 2 copy constructors
     // vraag 18 (Object Georiënteerde Project - Aanvullend): useful proven (dynamic) polymorphism
-    // Diepe kopie: voor elk device in 'other' wordt clone() aangeroepen,
-    // wat een volledig nieuw, onafhankelijk Device-object maakt van het
-    // juiste, concrete type (Light/Thermostat/...).
     Room::Room(const Room& other)
         : name_(other.name_)
     {
@@ -39,9 +36,6 @@ namespace smarthome
     }
 
     // vraag 19 (Object Georiënteerde Project - Aanvullend): useful usage of "this"
-    // De check "if (this == &other)" vergelijkt het GEHEUGENADRES van het
-    // huidige object met het adres van de parameter -- dit kan ENKEL met
-    // "this". Zonder deze check zou "room = room;" tot dataverlies leiden.
     Room& Room::operator=(const Room& other)
     {
         if (this == &other)
@@ -72,9 +66,6 @@ namespace smarthome
     }
 
     // vraag 37 (Object Georiënteerde Project - Aanvullend): useful usage of nullptr
-    // Geeft nullptr terug als er geen device met deze naam bestaat --
-    // de standaard, type-safe C++-manier om "niet gevonden" aan te
-    // geven bij een functie die een pointer teruggeeft.
     Device* Room::findDevice(const std::string& name) const
     {
         // vraag 29 (Object Georiënteerde Project - Aanvullend): at least 4 useful const references for variables (3/4)
@@ -100,9 +91,6 @@ namespace smarthome
     }
 
     // vraag 18 (Object Georiënteerde Project - Aanvullend): useful proven (dynamic) polymorphism
-    // device->status() geeft hier telkens het juiste, type-specifieke
-    // resultaat terug, zonder dat Room ooit weet welk concreet type er
-    // precies in de vector zit.
     void Room::printAllDevices() const
     {
         std::cout << "Kamer: " << name_ << std::endl;
@@ -125,9 +113,6 @@ namespace smarthome
         int count = 0;
         for (const auto& device : devices_)
         {
-            // find() zoekt 'searchTerm' ergens in de naam en geeft de
-            // positie terug, of std::string::npos als het er niet in
-            // staat.
             if (device->getName().find(searchTerm) != std::string::npos)
             {
                 ++count;
@@ -162,14 +147,7 @@ namespace smarthome
     }
 
     // vraag 38 (Object Georiënteerde Project - Aanvullend): useful usage of (modern) file-I/O
-    // vraag 49 (Object Georiënteerde Project - Aanvullend): useful usage
-    // of an external library (not Qt)
-    // nlohmann/json (header-only, https://github.com/nlohmann/json)
-    // wordt hier gebruikt in plaats van een zelfgemaakt, fragiel
-    // "|"-gescheiden tekstformaat. JSON is leesbaar, standaard, en
-    // maakt het toevoegen van extra velden (zoals de doeltemperatuur
-    // van een Thermostat) natuurlijk en veilig, zonder handmatig
-    // string-parsen.
+    // vraag 49 (Object Georiënteerde Project - Aanvullend): useful usage of an external library (not Qt)
     void Room::saveToFile(const std::string& path) const
     {
         json j;
@@ -200,8 +178,6 @@ namespace smarthome
         out << j.dump(2);
     }
 
-    // vraag 49 (Object Georiënteerde Project - Aanvullend): useful usage
-    // of an external library (not Qt)
     void Room::loadFromFile(const std::string& path)
     {
         std::ifstream in(path);
@@ -243,5 +219,11 @@ namespace smarthome
 
             devices_.push_back(std::move(device));
         }
+    }
+
+    // vraag 51 (Object Georiënteerde Project - Aanvullend): nice extra (House)
+    const std::string& Room::getName() const
+    {
+        return name_;
     }
 }

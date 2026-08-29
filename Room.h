@@ -52,18 +52,18 @@ public:
     // vraag 36 (Object Georiënteerde Project - Aanvullend): useful container class
     std::map<std::string, int> countDevicesByType() const;
 
+    // vraag 40 (Object Georiënteerde Project - Aanvullend): useful usage of lambda function
+    int countDevicesIf(const std::function<bool(const Device&)>& predicate) const;
+
     // vraag 38 (Object Georiënteerde Project - Aanvullend): useful usage of (modern) file-I/O
+    // vraag 49 (Object Georiënteerde Project - Aanvullend): useful usage of an external library (not Qt)
     void saveToFile(const std::string& path) const;
     void loadFromFile(const std::string& path);
 
-    // vraag 40 (Object Georiënteerde Project - Aanvullend): useful
-    // usage of lambda function
-    // Accepteert een std::function (kan een lambda zijn) als
-    // voorwaarde. Dit is veel flexibeler dan een vaste functie
-    // zoals countDevicesContaining(): de aanroeper bepaalt zelf
-    // waarop precies gefilterd wordt, zonder dat Room dat op
-    // voorhand moet voorzien.
-    int countDevicesIf(const std::function<bool(const Device&)>& predicate) const;
+    // vraag 51 (Object Georiënteerde Project - Aanvullend): nice extra (House)
+    // Nodig zodat House de naam van elke kamer kan opvragen bij
+    // het opslaan naar JSON.
+    const std::string& getName() const;
 
 private:
     std::string name_;

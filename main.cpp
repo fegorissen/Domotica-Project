@@ -8,6 +8,7 @@
 #include "Doorlock.h"
 #include "Camera.h"
 #include "Room.h"
+#include "House.h"
 #include "LogHistory.h"
 #include "DeviceNotFoundException.h"
 #include "MotionSensor.h"
@@ -39,9 +40,6 @@ void printActiveDeviceCount(Room& room)
 
 // vraag 2 (Object Georiënteerde Project - Aanvullend): clean main
 // vraag 47 (Object Georiënteerde Project - Aanvullend): usage of a GUI
-// main() draait eerst de volledige console-demo (bewijst alle andere
-// criteria zoals voorheen), en opent daarna een interactief
-// GUI-venster (MainWindow) dat dezelfde Room hergebruikt.
 int main(int argc, char* argv[])
 {
     QApplication app(argc, argv);
@@ -200,8 +198,54 @@ int main(int argc, char* argv[])
     std::cout << "--- kopie (Woonkamerlamp getoggled) ---" << std::endl;
     roomCopy.printAllDevices();
 
+    // vraag 51 (Object Georiënteerde Project - Aanvullend): nice extra (House)
+    // House is een nieuw niveau van object compositie: het beheert
+    // meerdere Room's via een std::map<std::string, Room> (vraag 36),
+    // op naam opzoekbaar.
+    House house("Mijn Huis");
+
+    Room& woonkamerInHuis = house.addRoom("Woonkamer");
+    woonkamerInHuis.addDevice(std::make_unique<Light>("Plafondlamp"));
+    woonkamerInHuis.addDevice(std::make_unique<Thermostat>("Woonkamer Verwarming"));
+    woonkamerInHuis.addDevice(std::make_unique<Camera>("Woonkamer Cam"));
+
+    Room& slaapkamer = house.addRoom("Slaapkamer");
+    slaapkamer.addDevice(std::make_unique<Light>("Nachtlampje"));
+    slaapkamer.addDevice(std::make_unique<DoorLock>("Slaapkamerdeur"));
+
+    std::cout << "--- House: " << house.getName() << " ---" << std::endl;
+    for (auto& pair : house.rooms())
+    {
+        pair.second.printAllDevices();
+    }
+    std::cout << "Totaal aantal devices in het hele huis: " << house.totalDeviceCount() << std::endl;
+
+    // vraag 37 (Object Georiënteerde Project - Aanvullend): useful usage of nullptr
+    Room* foundRoom = house.findRoom("Slaapkamer");
+    if (foundRoom != nullptr)
+    {
+        std::cout << "Slaapkamer gevonden, bevat " << foundRoom->devices().size() << " devices." << std::endl;
+    }
+
+    Room* notFoundRoom = house.findRoom("Badkamer");
+    if (notFoundRoom == nullptr)
+    {
+        std::cout << "Badkamer bestaat niet in dit huis." << std::endl;
+    }
+
+    // vraag 49 (Object Georiënteerde Project - Aanvullend): useful usage of an external library (not Qt)
+    house.saveToFile("house_save.json");
+    log.add("House opgeslagen naar house_save.json");
+
+    House loadedHouse("Geladen Huis");
+    loadedHouse.loadFromFile("house_save.json");
+    std::cout << "--- Geladen huis (na save/load) ---" << std::endl;
+    for (auto& pair : loadedHouse.rooms())
+    {
+        pair.second.printAllDevices();
+    }
+
     // vraag 38 (Object Georiënteerde Project - Aanvullend): useful usage of (modern) file-I/O (bewijs)
-    // vraag 49 (Object Georiënteerde Project - Aanvullend): useful usage of an external library (not Qt) (bewijs)
     livingRoom.saveToFile("smarthome_save.txt");
     log.add("Woonkamer opgeslagen naar smarthome_save.txt");
 
@@ -218,10 +262,12 @@ int main(int argc, char* argv[])
     // vraag 12: no mistake in object-oriented programming
 
     // vraag 47 (Object Georiënteerde Project - Aanvullend): usage of a GUI (bewijs)
-    // Opent een interactief venster waarin de gebruiker devices kan
-    // togglen. Hergebruikt dezelfde livingRoom als hierboven.
+    // vraag 51 (Object Georiënteerde Project - Aanvullend): nice extra (House)
+    // Het venster ontvangt nu het volledige House (met Woonkamer +
+    // Slaapkamer erin), en toont een dropdown om tussen beide te
+    // wisselen -- niet langer beperkt tot één losse Room.
     std::cout << "--- GUI-venster wordt geopend ---" << std::endl;
-    SmartHomeWindow window(livingRoom);
+    SmartHomeWindow window(house);
     window.show();
 
     return app.exec();

@@ -33,6 +33,11 @@ set(SMARTHOME_SOURCES
   DeviceNotFoundException.h
   SmartHomeWindow.h
   SmartHomeWindow.cpp
+  Rule.h
+  RuleEngine.h
+  RuleEngine.cpp
+  House.h
+  House.cpp
 )
 
 add_executable(Smarthome

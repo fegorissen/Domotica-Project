@@ -8,8 +8,7 @@ namespace smarthome
 // usage of signals/slots
 // Camera erft van QObject om Qt's signal/slot-mechanisme te
 // kunnen gebruiken. Dit ontkoppelt Camera van wie er precies
-// luistert naar beweging-events: Camera weet niets over
-// MotionMonitor hieronder, het zendt enkel een signal uit.
+// luistert naar beweging-events.
 class Camera : public QObject, public Device
 {
     Q_OBJECT
@@ -24,13 +23,13 @@ public:
 
     void triggerMotion();
 
+    // vraag 51 (Object Georiënteerde Project - Aanvullend): nice extra (RuleEngine)
+    // Publieke getter, nodig zodat RuleEngine-condities (lambda's)
+    // de motion-status kunnen checken zonder een friend of interne
+    // toegang te vereisen.
+    bool isMotionDetected() const;
+
 signals:
-    // vraag 43 (Object Georiënteerde Project - Aanvullend): useful
-    // usage of signals/slots
-    // Wordt uitgezonden telkens triggerMotion() aangeroepen wordt.
-    // Elke klasse die hierop "connect" doet (zie main.cpp) wordt
-    // automatisch op de hoogte gebracht, zonder dat Camera die
-    // klasse hoeft te kennen.
     void motionDetectedSignal(const std::string& deviceName);
 
 private:

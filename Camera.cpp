@@ -39,4 +39,10 @@ namespace smarthome
         motionDetected_ = true;
         emit motionDetectedSignal(getName());
     }
+
+    // vraag 51 (Object Georiënteerde Project - Aanvullend): nice extra (RuleEngine)
+    bool Camera::isMotionDetected() const
+    {
+        return motionDetected_;
+    }
 }
