@@ -37,6 +37,14 @@ public:
     // vraag 37 (Object Georiënteerde Project - Aanvullend): useful usage of nullptr
     Device* findDevice(const std::string& name) const;
 
+    // vraag 39 (Object Georiënteerde Project - Aanvullend): useful
+    // exception handling
+    // Gooit DeviceNotFoundException als het device niet bestaat,
+    // i.p.v. nullptr terug te geven zoals findDevice(). Nuttig
+    // wanneer het ontbreken van een device een ECHTE fout is die
+    // niet zomaar genegeerd mag worden.
+    Device& getDeviceOrThrow(const std::string& name) const;
+
     void printAllDevices() const;
 
     // vraag 34 (Object Georiënteerde Project - Aanvullend): 2 useful (modern) call-by-references (2/2)
@@ -48,17 +56,8 @@ public:
     // vraag 36 (Object Georiënteerde Project - Aanvullend): useful container class
     std::map<std::string, int> countDevicesByType() const;
 
-    // vraag 38 (Object Georiënteerde Project - Aanvullend): useful
-    // usage of (modern) file-I/O
-    // Slaat elk device op als "type|naam|aan-of-uit" per regel,
-    // via std::ofstream (modern C++ file-I/O, geen FILE*/fopen).
+    // vraag 38 (Object Georiënteerde Project - Aanvullend): useful usage of (modern) file-I/O
     void saveToFile(const std::string& path) const;
-
-    // vraag 38 (Object Georiënteerde Project - Aanvullend): useful
-    // usage of (modern) file-I/O
-    // Leest het bestand terug via std::ifstream en reconstrueert
-    // elk device via de factory (zie DeviceFactory.h), gebaseerd
-    // op de opgeslagen typenaam.
     void loadFromFile(const std::string& path);
 
 private:

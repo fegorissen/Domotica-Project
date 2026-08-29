@@ -6,13 +6,13 @@
 #include "Camera.h"
 #include "Room.h"
 #include "LogHistory.h"
+#include "DeviceNotFoundException.h"
 
 // vraag 27 (Object Georiënteerde Project - Aanvullend): everything in
 // one or more self-made namespace(s)
 using namespace smarthome;
 
-// vraag 34 (Object Georiënteerde Project - Aanvullend): 2 useful
-// (modern) call-by-references (2/2)
+// vraag 34 (Object Georiënteerde Project - Aanvullend): 2 useful (modern) call-by-references (2/2)
 void printActiveDeviceCount(Room& room)
 {
     int count = 0;
@@ -110,6 +110,27 @@ int main()
     int lampCount = livingRoom.countDevicesContaining("lamp");
     std::cout << "Aantal devices met 'lamp' in de naam: " << lampCount << std::endl;
 
+    // vraag 39 (Object Georiënteerde Project - Aanvullend): useful
+    // exception handling (bewijs)
+    // We proberen een bestaand EN een niet-bestaand device op te
+    // vragen via getDeviceOrThrow(). De eerste lukt gewoon, de tweede
+    // gooit een DeviceNotFoundException die hier netjes opgevangen
+    // wordt -- het programma crasht niet, maar toont een duidelijke
+    // foutmelding.
+    try
+    {
+        Device& gevondenDeur = livingRoom.getDeviceOrThrow("Voordeur");
+        std::cout << "Gevonden via getDeviceOrThrow: " << gevondenDeur.getName() << std::endl;
+
+        Device& nietBestaand = livingRoom.getDeviceOrThrow("Achterdeur");
+        std::cout << "Dit zou nooit geprint mogen worden: " << nietBestaand.getName() << std::endl;
+    }
+    catch (const DeviceNotFoundException& e)
+    {
+        std::cout << "Exception opgevangen: " << e.what() << std::endl;
+        log.add(std::string("Exception opgevangen: ") + e.what());
+    }
+
     // vraag 25 (Object Georiënteerde Project - Aanvullend): useful template function or class (bewijs)
     Thermostat* thermostaat = dynamic_cast<Thermostat*>(thermostaatDevice);
     if (thermostaat != nullptr)
@@ -141,11 +162,7 @@ int main()
     std::cout << "--- kopie (Woonkamerlamp getoggled) ---" << std::endl;
     roomCopy.printAllDevices();
 
-    // vraag 38 (Object Georiënteerde Project - Aanvullend): useful usage
-    // of (modern) file-I/O (bewijs)
-    // Slaat livingRoom op naar een bestand, maakt dan een compleet
-    // NIEUWE, lege Room aan, laadt het bestand erin, en toont dat de
-    // inhoud correct teruggekomen is -- inclusief de aan/uit-status.
+    // vraag 38 (Object Georiënteerde Project - Aanvullend): useful usage of (modern) file-I/O (bewijs)
     livingRoom.saveToFile("smarthome_save.txt");
     log.add("Woonkamer opgeslagen naar smarthome_save.txt");
 

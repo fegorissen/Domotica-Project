@@ -31,6 +31,8 @@ add_executable(Smarthome
   LogHistory.cpp
   DeviceFactory.cpp
   DeviceFactory.h
+  DeviceNotFoundException.h
+  DeviceNotFoundException.cpp
 
 )
 target_link_libraries(Smarthome Qt${QT_VERSION_MAJOR}::Core)

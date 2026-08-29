@@ -1,5 +1,6 @@
 #include "Room.h"
 #include "DeviceFactory.h"
+#include "DeviceNotFoundException.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -65,6 +66,17 @@ namespace smarthome
         return nullptr;
     }
 
+    // vraag 39 (Object Georiënteerde Project - Aanvullend): useful exception handling
+    Device& Room::getDeviceOrThrow(const std::string& name) const
+    {
+        Device* device = findDevice(name);
+        if (device == nullptr)
+        {
+            throw DeviceNotFoundException(name);
+        }
+        return *device;
+    }
+
     void Room::printAllDevices() const
     {
         std::cout << "Kamer: " << name_ << std::endl;
@@ -102,7 +114,6 @@ namespace smarthome
         return counts;
     }
 
-    // vraag 38 (Object Georiënteerde Project - Aanvullend): useful usage of (modern) file-I/O
     void Room::saveToFile(const std::string& path) const
     {
         std::ofstream out(path);
@@ -119,7 +130,6 @@ namespace smarthome
         }
     }
 
-    // vraag 38 (Object Georiënteerde Project - Aanvullend): useful usage of (modern) file-I/O
     void Room::loadFromFile(const std::string& path)
     {
         std::ifstream in(path);
