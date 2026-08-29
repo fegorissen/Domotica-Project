@@ -1,27 +1,23 @@
 #pragma once
 #include <string>
 #include <ostream>
+#include <QDateTime>
 
 namespace smarthome
 {
-// vraag 32 (Object Georiënteerde Project - Aanvullend): dynamic
-// memory allocation (new)
-// vraag 33 (Object Georiënteerde Project - Aanvullend): dynamic
-// memory removing (delete)
-// Zelfgemaakte, vaste-grootte ringbuffer voor de laatste N
-// logberichten. std::vector zou hier ook kunnen, maar dit
-// demonstreert bewust manueel geheugenbeheer met new[]/delete[],
-// correct gepaard in constructor/destructor (geen memory leak).
+// vraag 32 (Object Georiënteerde Project - Aanvullend): dynamic memory allocation (new)
+// vraag 33 (Object Georiënteerde Project - Aanvullend): dynamic memory removing (delete)
+// vraag 42 (Object Georiënteerde Project - Aanvullend): useful Qt class
+// QDateTime (uit Qt Core) wordt gebruikt om elk logbericht een
+// echte, correct geformatteerde tijdstempel te geven -- nuttiger
+// en minder foutgevoelig dan zelf datum/tijd-logica te schrijven
+// met <ctime>.
 class LogHistory
 {
 public:
     explicit LogHistory(std::size_t capacity = 10);
     ~LogHistory();
 
-    // Kopiëren van een handgemaakte buffer is foutgevoelig (dubbele
-    // vrijgave van hetzelfde geheugen als je niet oplet) en er is
-    // geen zinvolle use case voor -- expliciet verboden i.p.v. per
-    // ongeluk een gevaarlijke shallow copy toe te laten.
     LogHistory(const LogHistory&) = delete;
     LogHistory& operator=(const LogHistory&) = delete;
 

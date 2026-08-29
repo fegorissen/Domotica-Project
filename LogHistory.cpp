@@ -4,10 +4,6 @@ namespace smarthome
 {
 // vraag 32 (Object Georiënteerde Project - Aanvullend): dynamic
 // memory allocation (new)
-// new[] vraagt hier expliciet een array van 'capacity' strings op
-// de heap aan -- dit gebeurt NIET automatisch zoals bij een
-// gewone lokale variabele, en moet later handmatig weer
-// vrijgegeven worden (zie de destructor hieronder).
 LogHistory::LogHistory(std::size_t capacity)
     : buffer_(new std::string[capacity]), capacity_(capacity)
 {
@@ -15,18 +11,21 @@ LogHistory::LogHistory(std::size_t capacity)
 
 // vraag 33 (Object Georiënteerde Project - Aanvullend): dynamic
 // memory removing (delete)
-// delete[] geeft het geheugen dat in de constructor met new[]
-// werd aangevraagd weer vrij. Dit MOET gebeuren, anders zou elke
-// LogHistory die vernietigd wordt een memory leak achterlaten --
-// de correcte paring van new[]/delete[] voorkomt dat.
 LogHistory::~LogHistory()
 {
     delete[] buffer_;
 }
 
+// vraag 42 (Object Georiënteerde Project - Aanvullend): useful Qt class
+// QDateTime::currentDateTime() (Qt Core) haalt hier het huidige
+// tijdstip op, en .toString()/.toStdString() zetten dat om naar
+// een leesbare, herbruikbare std::string-tijdstempel die vóór
+// elk logbericht geplakt wordt.
 void LogHistory::add(const std::string& message)
 {
-    buffer_[next_] = message;
+    QString timestamp = QDateTime::currentDateTime().toString("HH:mm:ss");
+    std::string fullMessage = "[" + timestamp.toStdString() + "] " + message;
+    buffer_[next_] = fullMessage;
     next_ = (next_ + 1) % capacity_;
     if (count_ < capacity_)
     {

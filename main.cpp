@@ -1,5 +1,7 @@
 #include <iostream>
 #include <memory>
+#include <thread>
+#include <chrono>
 #include "Light.h"
 #include "Thermostat.h"
 #include "Doorlock.h"
@@ -7,6 +9,7 @@
 #include "Room.h"
 #include "LogHistory.h"
 #include "DeviceNotFoundException.h"
+#include "MotionSensor.h"
 
 // vraag 27 (Object Georiënteerde Project - Aanvullend): everything in
 // one or more self-made namespace(s)
@@ -110,12 +113,7 @@ int main()
     int lampCount = livingRoom.countDevicesContaining("lamp");
     std::cout << "Aantal devices met 'lamp' in de naam: " << lampCount << std::endl;
 
-    // vraag 40 (Object Georiënteerde Project - Aanvullend): useful
-    // usage of lambda function (bewijs)
-    // De lambda [](const Device& d) { return d.isOn(); } wordt hier
-    // ter plekke gedefinieerd en als voorwaarde doorgegeven -- Room
-    // hoeft niets te weten over "isOn", het roept enkel de meegegeven
-    // functie aan voor elk device.
+    // vraag 40 (Object Georiënteerde Project - Aanvullend): useful usage of lambda function (bewijs)
     int aantalAan = livingRoom.countDevicesIf([](const Device& d) { return d.isOn(); });
     std::cout << "Aantal devices aan (via lambda): " << aantalAan << std::endl;
 
@@ -136,6 +134,24 @@ int main()
     {
         std::cout << "Exception opgevangen: " << e.what() << std::endl;
         log.add(std::string("Exception opgevangen: ") + e.what());
+    }
+
+    // vraag 41 (Object Georiënteerde Project - Aanvullend): useful
+    // usage of threads (bewijs)
+    // MotionSensor draait in zijn eigen thread en simuleert 3x
+    // beweging-detectie op de achtergrond, terwijl main() ondertussen
+    // gewoon doorgaat. stop() sluit de thread netjes af vóór we
+    // verdergaan (gebeurt ook automatisch in de destructor).
+    Camera* camDevice = dynamic_cast<Camera*>(livingRoom.findDevice("Cam Living"));
+    if (camDevice != nullptr)
+    {
+        camDevice->toggle();
+        MotionSensor sensor(*camDevice);
+        sensor.start();
+        std::this_thread::sleep_for(std::chrono::milliseconds(700));
+        sensor.stop();
+        log.add("MotionSensor-thread gestart en netjes gestopt");
+        std::cout << "Cam Living na motion sensor: " << camDevice->status() << std::endl;
     }
 
     // vraag 25 (Object Georiënteerde Project - Aanvullend): useful template function or class (bewijs)
