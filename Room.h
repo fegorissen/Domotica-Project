@@ -3,6 +3,7 @@
 #include <vector>
 #include <map>
 #include <memory>
+#include <functional>
 #include "Device.h"
 
 namespace smarthome
@@ -37,12 +38,7 @@ public:
     // vraag 37 (Object Georiënteerde Project - Aanvullend): useful usage of nullptr
     Device* findDevice(const std::string& name) const;
 
-    // vraag 39 (Object Georiënteerde Project - Aanvullend): useful
-    // exception handling
-    // Gooit DeviceNotFoundException als het device niet bestaat,
-    // i.p.v. nullptr terug te geven zoals findDevice(). Nuttig
-    // wanneer het ontbreken van een device een ECHTE fout is die
-    // niet zomaar genegeerd mag worden.
+    // vraag 39 (Object Georiënteerde Project - Aanvullend): useful exception handling
     Device& getDeviceOrThrow(const std::string& name) const;
 
     void printAllDevices() const;
@@ -59,6 +55,15 @@ public:
     // vraag 38 (Object Georiënteerde Project - Aanvullend): useful usage of (modern) file-I/O
     void saveToFile(const std::string& path) const;
     void loadFromFile(const std::string& path);
+
+    // vraag 40 (Object Georiënteerde Project - Aanvullend): useful
+    // usage of lambda function
+    // Accepteert een std::function (kan een lambda zijn) als
+    // voorwaarde. Dit is veel flexibeler dan een vaste functie
+    // zoals countDevicesContaining(): de aanroeper bepaalt zelf
+    // waarop precies gefilterd wordt, zonder dat Room dat op
+    // voorhand moet voorzien.
+    int countDevicesIf(const std::function<bool(const Device&)>& predicate) const;
 
 private:
     std::string name_;

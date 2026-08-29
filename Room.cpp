@@ -66,7 +66,6 @@ namespace smarthome
         return nullptr;
     }
 
-    // vraag 39 (Object Georiënteerde Project - Aanvullend): useful exception handling
     Device& Room::getDeviceOrThrow(const std::string& name) const
     {
         Device* device = findDevice(name);
@@ -169,5 +168,19 @@ namespace smarthome
 
             devices_.push_back(std::move(device));
         }
+    }
+
+    // vraag 40 (Object Georiënteerde Project - Aanvullend): useful usage of lambda function
+    int Room::countDevicesIf(const std::function<bool(const Device&)>& predicate) const
+    {
+        int count = 0;
+        for (const auto& device : devices_)
+        {
+            if (predicate(*device))
+            {
+                ++count;
+            }
+        }
+        return count;
     }
 }

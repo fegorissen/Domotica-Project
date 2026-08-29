@@ -110,13 +110,20 @@ int main()
     int lampCount = livingRoom.countDevicesContaining("lamp");
     std::cout << "Aantal devices met 'lamp' in de naam: " << lampCount << std::endl;
 
-    // vraag 39 (Object Georiënteerde Project - Aanvullend): useful
-    // exception handling (bewijs)
-    // We proberen een bestaand EN een niet-bestaand device op te
-    // vragen via getDeviceOrThrow(). De eerste lukt gewoon, de tweede
-    // gooit een DeviceNotFoundException die hier netjes opgevangen
-    // wordt -- het programma crasht niet, maar toont een duidelijke
-    // foutmelding.
+    // vraag 40 (Object Georiënteerde Project - Aanvullend): useful
+    // usage of lambda function (bewijs)
+    // De lambda [](const Device& d) { return d.isOn(); } wordt hier
+    // ter plekke gedefinieerd en als voorwaarde doorgegeven -- Room
+    // hoeft niets te weten over "isOn", het roept enkel de meegegeven
+    // functie aan voor elk device.
+    int aantalAan = livingRoom.countDevicesIf([](const Device& d) { return d.isOn(); });
+    std::cout << "Aantal devices aan (via lambda): " << aantalAan << std::endl;
+
+    int aantalLangeNaam = livingRoom.countDevicesIf(
+        [](const Device& d) { return d.getName().size() > 10; });
+    std::cout << "Aantal devices met naam > 10 karakters (via lambda): " << aantalLangeNaam << std::endl;
+
+    // vraag 39 (Object Georiënteerde Project - Aanvullend): useful exception handling (bewijs)
     try
     {
         Device& gevondenDeur = livingRoom.getDeviceOrThrow("Voordeur");
