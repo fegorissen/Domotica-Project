@@ -3,7 +3,7 @@
 namespace smarthome
 {
     Camera::Camera(std::string name)
-        : Device(name)
+        : Device(std::move(name))
     {
     }
 
@@ -23,7 +23,6 @@ namespace smarthome
             return "opname (rustig)";
     }
 
-    // vraag 36 (Object Georiënteerde Project - Aanvullend): useful container class
     std::string Camera::getTypeName() const
     {
         return "Camera";
@@ -31,11 +30,13 @@ namespace smarthome
 
     std::unique_ptr<Device> Camera::clone() const
     {
-        return std::make_unique<Camera>(*this);
+        return std::make_unique<Camera>(getName());
     }
 
+    // vraag 43 (Object Georiënteerde Project - Aanvullend): useful usage of signals/slots
     void Camera::triggerMotion()
     {
         motionDetected_ = true;
+        emit motionDetectedSignal(getName());
     }
 }

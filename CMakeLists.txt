@@ -30,6 +30,7 @@ add_executable(Smarthome
   MotionSensor.h
   MotionSensor.cpp
   DeviceNotFoundException.h
+  MotionMonitor.h
 )
 target_link_libraries(Smarthome Qt${QT_VERSION_MAJOR}::Core Threads::Threads)
 include(GNUInstallDirs)

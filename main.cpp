@@ -10,6 +10,7 @@
 #include "LogHistory.h"
 #include "DeviceNotFoundException.h"
 #include "MotionSensor.h"
+#include "MotionMonitor.h"
 
 // vraag 27 (Object Georiënteerde Project - Aanvullend): everything in
 // one or more self-made namespace(s)
@@ -136,13 +137,25 @@ int main()
         log.add(std::string("Exception opgevangen: ") + e.what());
     }
 
+    // vraag 43 (Object Georiënteerde Project - Aanvullend): useful
+    // usage of signals/slots (bewijs)
+    // connect() koppelt Camera's signal aan MotionMonitor's slot.
+    // Qt::DirectConnection is nodig omdat triggerMotion() vanuit de
+    // MotionSensor-achtergrondthread aangeroepen wordt, terwijl
+    // 'monitor' in de hoofdthread leeft, en er geen Qt event loop
+    // draait om een normale (queued) verbinding te verwerken -- direct
+    // voert de slot onmiddellijk uit, in de thread van de aanroeper.
+    MotionMonitor monitor;
+    Camera* camDevice = dynamic_cast<Camera*>(livingRoom.findDevice("Cam Living"));
+    if (camDevice != nullptr)
+    {
+        QObject::connect(camDevice, &Camera::motionDetectedSignal,
+                         &monitor, &MotionMonitor::onMotionDetected,
+                         Qt::DirectConnection);
+    }
+
     // vraag 41 (Object Georiënteerde Project - Aanvullend): useful
     // usage of threads (bewijs)
-    // MotionSensor draait in zijn eigen thread en simuleert 3x
-    // beweging-detectie op de achtergrond, terwijl main() ondertussen
-    // gewoon doorgaat. stop() sluit de thread netjes af vóór we
-    // verdergaan (gebeurt ook automatisch in de destructor).
-    Camera* camDevice = dynamic_cast<Camera*>(livingRoom.findDevice("Cam Living"));
     if (camDevice != nullptr)
     {
         camDevice->toggle();
