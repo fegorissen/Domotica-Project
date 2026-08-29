@@ -2,15 +2,13 @@
 
 namespace smarthome
 {
-// vraag 32 (Object Georiënteerde Project - Aanvullend): dynamic
-// memory allocation (new)
+// vraag 32 (Object Georiënteerde Project - Aanvullend): dynamic memory allocation (new)
 LogHistory::LogHistory(std::size_t capacity)
     : buffer_(new std::string[capacity]), capacity_(capacity)
 {
 }
 
-// vraag 33 (Object Georiënteerde Project - Aanvullend): dynamic
-// memory removing (delete)
+// vraag 33 (Object Georiënteerde Project - Aanvullend): dynamic memory removing (delete)
 LogHistory::~LogHistory()
 {
     delete[] buffer_;
@@ -40,5 +38,21 @@ void LogHistory::printAll(std::ostream& os) const
     {
         os << buffer_[(start + i) % capacity_] << "\n";
     }
+}
+
+// vraag 47 (Object Georiënteerde Project - Aanvullend): usage of a GUI
+// Berekent de index van het laatst toegevoegde bericht in de
+// ringbuffer. "next_" wijst altijd naar de VOLGENDE lege plek, dus
+// het laatst toegevoegde bericht staat één positie terug (met
+// wraparound via de modulo, vandaar + capacity_ om nooit negatief
+// te worden).
+std::string LogHistory::last() const
+{
+    if (count_ == 0)
+    {
+        return "";
+    }
+    std::size_t lastIndex = (next_ + capacity_ - 1) % capacity_;
+    return buffer_[lastIndex];
 }
 }

@@ -5,8 +5,8 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Widgets)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Widgets)
 find_package(Threads REQUIRED)
 
 set(SMARTHOME_SOURCES
@@ -31,24 +31,22 @@ set(SMARTHOME_SOURCES
   MotionSensor.cpp
   MotionMonitor.h
   DeviceNotFoundException.h
+  SmartHomeWindow.h
+  SmartHomeWindow.cpp
 )
 
 add_executable(Smarthome
   main.cpp
   ${SMARTHOME_SOURCES}
 )
-target_link_libraries(Smarthome Qt${QT_VERSION_MAJOR}::Core Threads::Threads)
+target_link_libraries(Smarthome Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Widgets Threads::Threads)
 
 # vraag 44 (Object Georiënteerde Project - Aanvullend): test-driven development
-# Apart build-doel, hergebruikt dezelfde klassen als het hoofdprogramma
-# maar met tests.cpp i.p.v. main.cpp -- kan onafhankelijk gebouwd en
-# uitgevoerd worden (in Qt Creator: kies "SmarthomeTests" als actief
-# build-doel via de Kit-selector onderaan links).
 add_executable(SmarthomeTests
   tests.cpp
   ${SMARTHOME_SOURCES}
 )
-target_link_libraries(SmarthomeTests Qt${QT_VERSION_MAJOR}::Core Threads::Threads)
+target_link_libraries(SmarthomeTests Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Widgets Threads::Threads)
 
 include(GNUInstallDirs)
 install(TARGETS Smarthome

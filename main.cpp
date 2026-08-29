@@ -2,6 +2,7 @@
 #include <memory>
 #include <thread>
 #include <chrono>
+#include <QApplication>
 #include "Light.h"
 #include "Thermostat.h"
 #include "Doorlock.h"
@@ -11,6 +12,7 @@
 #include "DeviceNotFoundException.h"
 #include "MotionSensor.h"
 #include "MotionMonitor.h"
+#include "SmartHomeWindow.h"
 
 // vraag 27 (Object Georiënteerde Project - Aanvullend): everything in
 // one or more self-made namespace(s)
@@ -36,8 +38,14 @@ void printActiveDeviceCount(Room& room)
 // Zie https://github.com/fegorissen/Domotica-Project/commits/main
 
 // vraag 2 (Object Georiënteerde Project - Aanvullend): clean main
-int main()
+// vraag 47 (Object Georiënteerde Project - Aanvullend): usage of a GUI
+// main() draait eerst de volledige console-demo (bewijst alle andere
+// criteria zoals voorheen), en opent daarna een interactief
+// GUI-venster (MainWindow) dat dezelfde Room hergebruikt.
+int main(int argc, char* argv[])
 {
+    QApplication app(argc, argv);
+
     // vraag 32 (Object Georiënteerde Project - Aanvullend): dynamic memory allocation (new) (bewijs)
     // vraag 33 (Object Georiënteerde Project - Aanvullend): dynamic memory removing (delete) (bewijs)
     LogHistory log;
@@ -139,12 +147,6 @@ int main()
 
     // vraag 43 (Object Georiënteerde Project - Aanvullend): useful
     // usage of signals/slots (bewijs)
-    // connect() koppelt Camera's signal aan MotionMonitor's slot.
-    // Qt::DirectConnection is nodig omdat triggerMotion() vanuit de
-    // MotionSensor-achtergrondthread aangeroepen wordt, terwijl
-    // 'monitor' in de hoofdthread leeft, en er geen Qt event loop
-    // draait om een normale (queued) verbinding te verwerken -- direct
-    // voert de slot onmiddellijk uit, in de thread van de aanroeper.
     MotionMonitor monitor;
     Camera* camDevice = dynamic_cast<Camera*>(livingRoom.findDevice("Cam Living"));
     if (camDevice != nullptr)
@@ -199,6 +201,7 @@ int main()
     roomCopy.printAllDevices();
 
     // vraag 38 (Object Georiënteerde Project - Aanvullend): useful usage of (modern) file-I/O (bewijs)
+    // vraag 49 (Object Georiënteerde Project - Aanvullend): useful usage of an external library (not Qt) (bewijs)
     livingRoom.saveToFile("smarthome_save.txt");
     log.add("Woonkamer opgeslagen naar smarthome_save.txt");
 
@@ -213,5 +216,13 @@ int main()
     log.printAll(std::cout);
 
     // vraag 12: no mistake in object-oriented programming
-    return 0;
+
+    // vraag 47 (Object Georiënteerde Project - Aanvullend): usage of a GUI (bewijs)
+    // Opent een interactief venster waarin de gebruiker devices kan
+    // togglen. Hergebruikt dezelfde livingRoom als hierboven.
+    std::cout << "--- GUI-venster wordt geopend ---" << std::endl;
+    SmartHomeWindow window(livingRoom);
+    window.show();
+
+    return app.exec();
 }
