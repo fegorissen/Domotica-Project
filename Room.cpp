@@ -2,10 +2,13 @@
 #include "DeviceFactory.h"
 #include "DeviceNotFoundException.h"
 #include "Thermostat.h"
+#include "json.hpp"
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <utility>
+
+using json = nlohmann::json;
 
 namespace smarthome
 {
@@ -159,38 +162,46 @@ namespace smarthome
     }
 
     // vraag 38 (Object Georiënteerde Project - Aanvullend): useful usage of (modern) file-I/O
-    // Fix #1: Thermostat doeltemperatuur gaat verloren bij save/load.
-    // We voegen een vierde, optioneel veld toe aan het formaat:
-    // "type|naam|aan-uit|extra". Voor een Thermostat bevat 'extra' de
-    // doeltemperatuur; voor andere types blijft het gewoon "0" (niet
-    // gebruikt, maar houdt het formaat consistent en makkelijk uit te
-    // breiden voor toekomstige devices).
+    // vraag 49 (Object Georiënteerde Project - Aanvullend): useful usage
+    // of an external library (not Qt)
+    // nlohmann/json (header-only, https://github.com/nlohmann/json)
+    // wordt hier gebruikt in plaats van een zelfgemaakt, fragiel
+    // "|"-gescheiden tekstformaat. JSON is leesbaar, standaard, en
+    // maakt het toevoegen van extra velden (zoals de doeltemperatuur
+    // van een Thermostat) natuurlijk en veilig, zonder handmatig
+    // string-parsen.
     void Room::saveToFile(const std::string& path) const
     {
+        json j;
+        j["room"] = name_;
+        j["devices"] = json::array();
+
+        for (const auto& device : devices_)
+        {
+            json deviceJson;
+            deviceJson["type"] = device->getTypeName();
+            deviceJson["name"] = device->getName();
+            deviceJson["on"] = device->isOn();
+
+            if (const auto* thermostat = dynamic_cast<const Thermostat*>(device.get()))
+            {
+                deviceJson["targetTemperature"] = thermostat->getTargetTemperature();
+            }
+
+            j["devices"].push_back(deviceJson);
+        }
+
         std::ofstream out(path);
         if (!out.is_open())
         {
             std::cout << "Kon bestand niet openen om op te slaan: " << path << std::endl;
             return;
         }
-
-        for (const auto& device : devices_)
-        {
-            std::string extra = "0";
-            if (const auto* thermostat = dynamic_cast<const Thermostat*>(device.get()))
-            {
-                extra = std::to_string(thermostat->getTargetTemperature());
-            }
-
-            out << device->getTypeName() << '|' << device->getName() << '|'
-                << (device->isOn() ? 1 : 0) << '|' << extra << '\n';
-        }
+        out << j.dump(2);
     }
 
-    // vraag 38 (Object Georiënteerde Project - Aanvullend): useful usage of (modern) file-I/O
-    // Fix #1 (vervolg): bij het laden lezen we het vierde veld nu ook
-    // in, en passen het toe via setTargetTemperature() als het device
-    // een Thermostat blijkt te zijn.
+    // vraag 49 (Object Georiënteerde Project - Aanvullend): useful usage
+    // of an external library (not Qt)
     void Room::loadFromFile(const std::string& path)
     {
         std::ifstream in(path);
@@ -200,22 +211,16 @@ namespace smarthome
             return;
         }
 
+        json j;
+        in >> j;
+
         devices_.clear();
 
-        std::string line;
-        while (std::getline(in, line))
+        for (const auto& deviceJson : j["devices"])
         {
-            if (line.empty())
-            {
-                continue;
-            }
-
-            std::istringstream iss(line);
-            std::string typeName, deviceName, onStr, extraStr;
-            std::getline(iss, typeName, '|');
-            std::getline(iss, deviceName, '|');
-            std::getline(iss, onStr, '|');
-            std::getline(iss, extraStr, '|');
+            std::string typeName = deviceJson["type"];
+            std::string deviceName = deviceJson["name"];
+            bool wasOn = deviceJson["on"];
 
             auto device = createDeviceFromType(typeName, deviceName);
             if (device == nullptr)
@@ -223,7 +228,6 @@ namespace smarthome
                 continue;
             }
 
-            bool wasOn = (onStr == "1");
             if (wasOn != device->isOn())
             {
                 device->toggle();
@@ -231,9 +235,9 @@ namespace smarthome
 
             if (auto* thermostat = dynamic_cast<Thermostat*>(device.get()))
             {
-                if (!extraStr.empty())
+                if (deviceJson.contains("targetTemperature"))
                 {
-                    thermostat->setTargetTemperature(std::stod(extraStr));
+                    thermostat->setTargetTemperature(deviceJson["targetTemperature"]);
                 }
             }
 
